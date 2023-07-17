@@ -3,6 +3,7 @@ import { AiOutlineMail , AiFillFilePdf} from "react-icons/ai";
 import { FaLinkedinIn, FaGithub } from "react-icons/fa";
 import { BsReverseLayoutTextSidebarReverse } from "react-icons/bs";
 import Link from "next/link";
+import {LINKS} from "../data/myLinks";
 export const Main = () => {
   return (
     <div id="home" className="w-full pt-20 h-screen text-center">
@@ -21,16 +22,10 @@ export const Main = () => {
             I’m a Software Engineer with Extensive experiance in developing high quality frontend and backend applications.
           </p>
           <div className="flex items-center justify-between max-w-[330px] m-auto py-4">
-            <MainCircleIcon link={""} icon={<FaLinkedinIn />} />
-            <MainCircleIcon link={"github.com/birukbelay"} icon={<FaGithub />} />
-            <MainCircleLink
-              link={""}
-              icon={<AiOutlineMail link={"/#contact"} />}
-            />
-            <MainCircleLink
-              link={"/resume"}
-              icon={<BsReverseLayoutTextSidebarReverse link={"/resume"} />}
-            />
+            <MainCircleIcon link={LINKS.LINKEDIN_URL} icon={<FaLinkedinIn />} />
+            <MainCircleIcon link={LINKS.LINKEDIN_URL} icon={<FaGithub />} />
+            <MainCircleLink link={"/#contact"} icon={<AiOutlineMail  />} />
+            <MainCircleLink link={"/resume"} icon={<BsReverseLayoutTextSidebarReverse />}/>
           </div>
         </div>
       </div>

@@ -3,7 +3,9 @@ import Image from "next/dist/client/image";
 import Link from "next/link";
 import { AiOutlineClose, AiOutlineMenu, AiOutlineMail } from "react-icons/ai";
 import { FaLinkedinIn, FaGithub } from "react-icons/fa";
-import { BsFillPersonLinesFill } from "react-icons/bs";
+import {BsReverseLayoutTextSidebarReverse} from "react-icons/bs";
+import {LINKS} from "../data/myLinks";
+import {MainCircleIcon, MainCircleLink} from "./Main";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -150,19 +152,10 @@ const Navbar = () => {
               </p>
               {/* icons */}
               <div className="flex items-center justify-evenly my-4 w-full sm:w-[90%]">
-                <div className="rounded-full shadow-lg shadow-gray-400  p-3 cursor-pointer hover:scale-155 ease-in duration-300">
-                  <FaLinkedinIn />
-                </div>
-                <div className="rounded-full shadow-lg shadow-gray-400 p-3 cursor-pointer hover:scale-120 ease-in duration-300">
-                  <FaGithub />
-                </div>
-                <div className="rounded-full shadow-lg shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300">
-                  <AiOutlineMail />
-                </div>
-                <div className="rounded-full shadow-lg shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300">
-                  <BsFillPersonLinesFill />
-                </div>
-                <CircleIcon icon={<BsFillPersonLinesFill />} />
+                <MainCircleIcon link={LINKS.LINKEDIN_URL} icon={<FaLinkedinIn />} />
+                <MainCircleIcon link={LINKS.LINKEDIN_URL} icon={<FaGithub />} />
+                <MainCircleLink link={"/#contact"} icon={<AiOutlineMail  />} />
+                <MainCircleLink link={"/resume"} icon={<BsReverseLayoutTextSidebarReverse />}/>
               </div>
             </div>
           </div>
