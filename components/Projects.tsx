@@ -1,11 +1,9 @@
 import React from "react";
-import Image from "next/image";
+// @ts-ignore
+import Image from 'next/image';
+// @ts-ignore
 import Link from "next/link";
-import propertyImg from "../public/assets/projects/property.jpg";
-import CryptoImg from "../public/assets/projects/crypto.jpg";
-import NetflixImg from "../public/assets/projects/netflix.jpg";
-import TwitchImg from "../public/assets/projects/twitch.jpg";
-const projectImages = [{ image: "/../public/assets/projects/property.jpg" }];
+
 
 export interface Project{
   id:string
@@ -22,14 +20,14 @@ interface pageProps{
 }
 
 const Projects = ({ projects }:pageProps) => {
-  console.log("pojecCOMP----- ", projects);
+
 
   const hasProjects = projects !== undefined && projects.length > 0;
 
   const nodes = hasProjects ? (
-    projects.map((proj) => (
+    projects.map((proj, idx) => (
       <ProjectItem
-        key={proj.id}
+        key={idx}
         image={proj.image}
         projectUrl={proj.id}
         tech={proj.tech}
@@ -48,34 +46,10 @@ const Projects = ({ projects }:pageProps) => {
         <p className="text-xl tracking-widest uppercase text-[#5651e5]">
           Projects
         </p>
-        <h2 className="py-4">What I've Built</h2>
+        <h2 className="py-4">Some of My Projects</h2>
         <div className="grid md:grid-cols-2 gap-8">
           {nodes}
 
-          <ProjectItem
-            image={propertyImg}
-            projectUrl="/projects"
-            tech="React Js"
-            title={"Property"}
-          />
-          <ProjectItem
-            image={CryptoImg}
-            projectUrl="/projects"
-            tech="Solidity"
-            title={"Crypto project"}
-          />
-          <ProjectItem
-            image={NetflixImg}
-            projectUrl="/projects"
-            tech="React js, React-Redux"
-            title={"Netflix"}
-          />
-          <ProjectItem
-            image={TwitchImg}
-            projectUrl="/projects"
-            tech="Vue js"
-            title={"Twitch Image"}
-          />
         </div>
       </div>
     </div>

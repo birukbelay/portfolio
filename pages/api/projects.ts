@@ -36,7 +36,7 @@ const projects:Project[] = [
 
 export default function handler(req, res) {
     const { id } = req.query;
-    console.log("pid==", id);
+    // console.log("pid==", id);
     res.status(200).json({ projects });
     //   res.end(`Post: ${pid}`);
   }

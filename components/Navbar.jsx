@@ -35,14 +35,14 @@ const Navbar = () => {
       <div className="flex justify-between items-center w-full h-full px-2 2xl:px-16">
         <Link href="/">
           <Image
-            src="/../public/assets/navLogo.png"
+            src="/assets/bkLogo.png"
             alt="/"
             width="125"
             height="50"
           />
         </Link>
         <div>
-          <ul className="hidden md:flex">
+          <ul className="hidden md:flex mr-4">
             <Link href="/">
               <li className={styles.navBarLink}>Home</li>
             </Link>
@@ -58,6 +58,9 @@ const Navbar = () => {
             <Link href="/#contact">
               <li className={styles.navBarLink}>Contacts</li>
             </Link>
+            <Link href="/resume">
+              <li className={styles.navBarLink}>Resume</li>
+            </Link>
           </ul>
           <div onClick={() => handleNav(true)} className="md:hidden">
             <AiOutlineMenu size={25} />
@@ -65,7 +68,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Nav bar */}
+      {/* ==============     Mobile Nav bar */}
       <div
         className={
           nav ? " md:hidden fixed left-0 top-0 w-full h-screen bg-black/70" : ""
@@ -83,9 +86,9 @@ const Navbar = () => {
             <div className="flex w-full items-center justify-between">
               <Link href="/">
                 <Image
-                  src="/../public/assets/navLogo.png"
-                  width={87}
-                  height={35}
+                  src="/assets/bkLogo.png"
+                  width={100}
+                  height={100}
                   alt="/"
                 />
               </Link>
@@ -100,12 +103,12 @@ const Navbar = () => {
             <div className="border-b border-gray-300 my-4">
               <p className="w-[85%] md:w-[90%] py-4 ">
                 {" "}
-                Let's build Some thing legendary together
+                Let s build Some thing legendary together
               </p>
             </div>
           </div>
 
-          {/* mobile menu */}
+          {/*  =================     mobile menu  =========== */}
           <div className="py-4 flex-col">
             <ul className="uppercase">
               <Link href="/#home">
@@ -133,9 +136,14 @@ const Navbar = () => {
                   Contact
                 </li>
               </Link>
+              <Link href="/resume">
+                <li onClick={() => setNav(false)} className="py-4 text-sm">
+                  Resume
+                </li>
+              </Link>
             </ul>
             {/* mobile bottom */}
-            <div className="pt-40 ">
+            <div className=" ">
               <p className="uppercase tracking-widest text-[#561e5">
                 {" "}
                 Lets Connect

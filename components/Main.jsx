@@ -1,36 +1,35 @@
 import React from "react";
-import { AiOutlineMail } from "react-icons/ai";
+import { AiOutlineMail , AiFillFilePdf} from "react-icons/ai";
 import { FaLinkedinIn, FaGithub } from "react-icons/fa";
-import { BsFillPersonLinesFill } from "react-icons/bs";
+import { BsReverseLayoutTextSidebarReverse } from "react-icons/bs";
 import Link from "next/link";
 export const Main = () => {
   return (
-    <div id="home" className="w-full h-screen text-center">
+    <div id="home" className="w-full pt-20 h-screen text-center">
       <div className="max-w-[1240px] w-full h-full mx-auto p-2 flex justify-center items-center">
         <div>
           <p className="uppercase text-sm tracking-widest text-gray-600">
-            Let's Build something Together
+            Let&apos;s Build something Together
           </p>
           <h1 className="py-4 text-gray-700">
             {" "}
-            Hi, I'm <span className="text-[#5651e5]"> Bk</span>{" "}
+            Hi, I&apos;m <span className="text-[#5651e5]"> Biruk</span>{" "}
           </h1>
-          <h1 className="py-2 text-gray-700"> A Software Engineer</h1>
+          <h1 className="py-2 text-gray-700"> Software Engineer</h1>
           <p className="py-4 text-gray-600 max-w-[70%] m-auto">
             {" "}
-            I’m focused on building responsive front-end web applications while
-            learning back-end technologies.
+            I’m a Software Engineer with Extensive experiance in developing high quality frontend and backend applications.
           </p>
           <div className="flex items-center justify-between max-w-[330px] m-auto py-4">
             <MainCircleIcon link={""} icon={<FaLinkedinIn />} />
-            <MainCircleIcon link={""} icon={<FaGithub />} />
+            <MainCircleIcon link={"github.com/birukbelay"} icon={<FaGithub />} />
             <MainCircleLink
               link={""}
               icon={<AiOutlineMail link={"/#contact"} />}
             />
             <MainCircleLink
-              link={""}
-              icon={<BsFillPersonLinesFill link={"/resume"} />}
+              link={"/resume"}
+              icon={<BsReverseLayoutTextSidebarReverse link={"/resume"} />}
             />
           </div>
         </div>

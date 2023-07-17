@@ -6,27 +6,27 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
 // import { useQuery } from "react-query";
+import {projectsData} from "../data/projectsData";
+// const fetchProject = async (id) => {
+//   return axios
+//     .get("/api/project/" + id)
+//     .then((res) => res.data);
+// };
 
-const fetchProject = async (id) => {
-  return axios
-    .get("http://localhost:3000/api/project/" + id)
-    .then((res) => res.data);
-};
-
-// Generates `/posts/1` and `/posts/2`
-export async function getStaticPaths() {
-  return {
-    paths: [{ params: { projectId: "1" } }, { params: { projectId: "2" } }],
-    fallback: false, // can also be true or 'blocking'
-  };
-}
-export const getStaticProps = async ({ params: { projectId } }) => {
-  const proj = await fetchProject(projectId);
-  console.log("the post ==----", proj);
+// // Generates `/posts/1` and `/posts/2`
+// export async function getStaticPaths() {
+//   return {
+//     paths: [{ params: { projectId: "1" } }, { params: { projectId: "2" } }],
+//     fallback: false, // can also be true or 'blocking'
+//   };
+// }
+export const getServerSideProps = async ({ params: { projectId } }) => {
+  // const proj = await fetchProject(projectId);
+  // console.log("the post ==----", proj);
 
   return {
     props: {
-      project: proj.project,
+      project: projectsData[projectId],
     },
   };
 };
@@ -37,38 +37,13 @@ const Project = ({ project }) => {
   // } = useRouter()
   const router = useRouter();
   const query = router.query;
-  // console.log("the query ==-----", query);
 
-  // const postQuery = useQuery(
-  //   ["post", query.project],
-  //   () => fetchPost(query.project),
-  //   {
-  //     initialData: project,
-  //     initialStale: true,
-  //   }
-  // );
-  // console.log("post query-------", postQuery);
-
-  // const project = {
-  //   name: "Property Finderz",
-  //   tech: "React JS / Tailwind / Firebase",
-  //   technologies: ["React", "Redux", "Tailwind", "Google Api", "Zillow API"],
-  //   desc: `This app was built using React JS and is hosted on Firebase. Users are able to search properties based on an Address, City, or ZIP code
-  //   to retrieve a list of active properties currently for sale. You will
-  //   be able to view property information as well as the specific
-  //   location of the property integrated with the Google Maps API. User
-  //   authentication is available so you can signup and signin to your
-  //   account with an email address in order to save your favorite
-  //   properties. This is made possible with Zillow API.`,
-  //   code: "https://github.com/fireclint/property-finder",
-  //   demo: "https://property-finder-development.web.app/",
-  // };
   useEffect(() => {
     const handleShadow = () => {};
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="pt-20 w-full">
       <div className="w-screen h-[50vh] relative">
         <div className="absolute top-0 left-0 w-full h-[50vh] bg-black/40 z-10" />
         <Image

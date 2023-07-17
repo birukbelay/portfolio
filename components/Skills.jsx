@@ -2,15 +2,15 @@ import React from "react";
 import Image from "next/image";
 
 const skillsArr = [
-  { name: "Html", image: "/../public/assets/skills/html.png" },
-  { name: "Css", image: "/../public/assets/skills/css.png" },
-  { name: "Javascipt", image: "/../public/assets/skills/javascript.png" },
-  { name: "React", image: "/../public/assets/skills/react.png" },
-  { name: "Tailwind Css", image: "/../public/assets/skills/tailwind.png" },
-  { name: "Next js", image: "/../public/assets/skills/nextjs.png" },
-  { name: "Nodejs", image: "/../public/assets/skills/node.png" },
-  { name: "mongo", image: "/../public/assets/skills/mongo.png" },
-  { name: "firebase", image: "/../public/assets/skills/firebase.png" },
+  { name: "Html", image: "/assets/skills/html.png" },
+  { name: "Css", image: "/assets/skills/css.png" },
+  { name: "Javascipt", image: "/assets/skills/javascript.png" },
+  { name: "React", image: "/assets/skills/react.png" },
+  { name: "Tailwind Css", image: "/assets/skills/tailwind.png" },
+  { name: "Next js", image: "/assets/skills/nextjs.png" },
+  { name: "Nodejs", image: "/assets/skills/node.png" },
+  { name: "mongo", image: "/assets/skills/mongo.png" },
+  { name: "firebase", image: "/assets/skills/firebase.png" },
 ];
 
 const Skills = () => {
