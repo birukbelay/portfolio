@@ -5,12 +5,15 @@ const skillsArr = [
   { name: "Html", image: "/assets/skills/html.png" },
   { name: "Css", image: "/assets/skills/css.png" },
   { name: "Javascipt", image: "/assets/skills/javascript.png" },
-  { name: "React", image: "/assets/skills/react.png" },
   { name: "Tailwind Css", image: "/assets/skills/tailwind.png" },
+  { name: "React", image: "/assets/skills/react.png" },
   { name: "Next js", image: "/assets/skills/nextjs.png" },
   { name: "Nodejs", image: "/assets/skills/node.png" },
-  { name: "mongo", image: "/assets/skills/mongo.png" },
+  { name: "Golang", image: "/assets/skills/golang.png" },
+  { name: "flask", image: "/assets/skills/flask.png" },
   { name: "firebase", image: "/assets/skills/firebase.png" },
+  { name: "mongo", image: "/assets/skills/mongo.png" },
+  { name: "sql", image: "/assets/skills/sql.png" },
 ];
 
 const Skills = () => {
@@ -22,18 +25,11 @@ const Skills = () => {
         </p>
         <h2>What I Can Do</h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 gap-8">
-          {/* {skillsArr.map((itm) => {
-            <SkillsItmes name={itm.name} image={itm.image} />;
-          })} */}
-          <SkillsItmes name={skillsArr[0].name} image={skillsArr[0].image} />
-          <SkillsItmes name={skillsArr[1].name} image={skillsArr[1].image} />
-          <SkillsItmes name={skillsArr[2].name} image={skillsArr[2].image} />
-          <SkillsItmes name={skillsArr[3].name} image={skillsArr[3].image} />
-          <SkillsItmes name={skillsArr[4].name} image={skillsArr[4].image} />
-          <SkillsItmes name={skillsArr[5].name} image={skillsArr[5].image} />
-          <SkillsItmes name={skillsArr[6].name} image={skillsArr[6].image} />
-          <SkillsItmes name={skillsArr[7].name} image={skillsArr[7].image} />
-          <SkillsItmes name={skillsArr[8].name} image={skillsArr[8].image} />
+          {skillsArr.map((itm, idx) => (
+            <SkillsItmes key={idx} name={itm.name} image={itm.image} />
+            )
+          )}
+
         </div>
       </div>
     </div>
