@@ -73,6 +73,7 @@ const resume = () => {
             <MainCircleIcon
                 link={LINKS.RESUME_LINK}
                 icon={<BsLink45Deg/>}
+                small={true}
             />
           </div>
         </div>

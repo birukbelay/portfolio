@@ -26,6 +26,7 @@ export const Main = () => {
             <MainCircleIcon link={LINKS.LINKEDIN_URL} icon={<FaGithub />} />
             <MainCircleLink link={"/#contact"} icon={<AiOutlineMail  />} />
             <MainCircleLink link={"/resume"} icon={<BsReverseLayoutTextSidebarReverse />}/>
+
           </div>
         </div>
       </div>
@@ -34,22 +35,25 @@ export const Main = () => {
 };
 
 export default Main;
-
-export const MainCircleIcon = ({ icon, link }) => {
+const Styles ={
+  small: "rounded-full shadow-lg shadow-gray-400  p-3 cursor-pointer hover:scale-155 ease-in duration-300",
+  big:"rounded-full shadow-lg shadow-gray-400 p-6 cursor-pointer hover:scale-105 ease-in duration-300"
+}
+export const MainCircleIcon = ({ icon, link, small }) => {
   return (
     <a href={link} target="_blank" rel="noreferrer">
-      <div className="rounded-full shadow-lg shadow-gray-400 p-6 cursor-pointer hover:scale-105 ease-in duration-300">
+      <div className={small ? Styles.small: Styles.big}>
         {icon}
       </div>
     </a>
   );
 };
 
-export const MainCircleLink = ({ icon, link }) => {
+export const MainCircleLink = ({ icon, link, small }) => {
   return (
     <Link href={link}>
       <a href="">
-        <div className="rounded-full shadow-lg shadow-gray-400 p-6 cursor-pointer hover:scale-105 ease-in duration-300">
+        <div className={small ? Styles.small: Styles.big}>
           {icon}
         </div>
       </a>
