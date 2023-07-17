@@ -15,9 +15,9 @@ export const projectsData = {
 
         demo: LINKS.BEST_EATS,
     },
-    3: {
+    1: {
         name: "Trip Advisor",
-        id: '3',
+        id: '1',
         image:"/assets/projects/tripAdvisor.png",
         tech: "React JS / Tailwind ",
         technologies: ["React",  "Tailwind"],
@@ -40,8 +40,8 @@ export const projectsData = {
         demo: "https://heroku.com/",
         video: "/assets/video/movies.mp4"
 },
-    1: {
-        id: '1',
+    3: {
+        id: '3',
         image:"/assets/projects/property.jpg",
         name: "Bet-Lembosa Real-Estates",
         tech: "React JS / Tailwind / Firebase / Python Flask/ Postgres",
