@@ -50,7 +50,7 @@ const Project = ({ project }) => {
           className="absolute z-1"
           layout="fill"
           objectFit="cover"
-          src={propertyImg}
+          src={project.image}
           alt="/"
         />
         <div className="absolute top-[70%] max-w-[1240px] w-full left-[50%] right-[50%] translate-x-[-50%] translate-y-[-50%] text-white py-4 z-10 p-2">
@@ -63,12 +63,17 @@ const Project = ({ project }) => {
           <p>Project</p>
           <h2>Overview</h2>
           <p className="p-2">{project.desc}</p>
-          <a href={project.code} target="_blank" rel="noreferrer">
+          {project.code ? <a href={project.code} target="_blank" rel="noreferrer">
             <button className="px-8 py-2 mt-4 mr-8">Code</button>
-          </a>
+          </a> :""}
           <a href={project.demo} target="_blank" rel="noreferrer">
             <button className="px-8 py-2 mt-4">Demo</button>
           </a>
+
+          {project.video ?
+              <video className=' pt-8 shadow-xl shadow-gray-400 rounded-xl py-4 ' autoPlay={true} loop muted id='video'>
+            <source src={project.video} type='video/mp4'/>
+          </video> :""}
         </div>
         <div className="col-span-4 md:col-span-1 shadow-xl shadow-gray-400 rounded-xl py-4">
           <div className="p-2">
