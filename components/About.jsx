@@ -21,7 +21,7 @@ export const About = () => {
             <b className='text-l text-[#5651e5] pr-2'>
             - Backend
             </b>
-             I have built extensible backend apps using Golang, Nodejs, and flask. I'm also experianced in integrating apps with d/t services like firebase
+             I have built extensible backend apps using Golang, Nodejs, and flask. I&apos;m also experianced in integrating apps with d/t services like firebase
           </p>
           <p  className="py-2 text-gray-600">
             <b className='text-l text-[#5651e5] pr-2'>
