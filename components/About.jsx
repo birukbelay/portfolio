@@ -14,7 +14,7 @@ export const About = () => {
           <h2 className="py-4">Who I Am</h2>
           <p className="py-2 text-gray-600">Full stack developer, web and mobile</p>
           <p className="py-2 text-gray-600">
-            I am a full-stack web & mobile developer with a deep understanding of making quality web & mobile apps using different frameworks and platforms.
+            I am a full-stack (web & mobile) developer with a deep understanding of making quality web & mobile apps using different frameworks and platforms.
 
           </p>
           <p  className="py-2 text-gray-600">

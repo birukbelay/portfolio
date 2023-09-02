@@ -9,6 +9,7 @@ import Main from "../components/Main";
 
 import Projects, { Project } from "../components/Projects";
 import Skills from "../components/Skills";
+import Footer from '../components/Footer'
 import { projectsData } from "../data/projectsData";
 
 // import {
@@ -77,7 +78,7 @@ export default function Home({projects}:pageProps) {
       <Skills />
       <Projects projects={projects}/>
       <Contact />
-        {/*</QueryClientProvider>*/}
+        {/*<Footer/>*/}
     </div>
   );
 }
