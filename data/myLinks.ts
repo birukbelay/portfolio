@@ -6,6 +6,9 @@ export const LINKS ={
 
 // PROJECTS
     BEST_EATS :"https://food-app-psi-khaki.vercel.app/",
+    QAWQAL :"https://qawqal.com",
+    HUWAA: "https://huwaa.app",
+
     TRIP_ADVISOR: "https://tripadvisor-theta.vercel.app/"
 
 }

@@ -99,21 +99,29 @@ const resume = () => {
         <div className="text-center py-4">
           <h5 className="text-center underline text-[18px] py-2">Skills</h5>
           <p className="py-2">
-            <span className="font-bold">Front-End Skills</span>
-            <span className="px-2">|</span> HTML
-            <span className="px-2">|</span>CSS
-            <span className="px-2">|</span>React
-            <span className="px-2">|</span>Next js
-            <span className="px-2">|</span>Tailwind
-            <span className="px-2">|</span> Firebase
-          </p>
-          <p className="py-2">
             <span className="font-bold">Back-End Skills</span>
             <span className="px-2">|</span>Node js
             <span className="px-2">|</span>Nest js
             <span className="px-2">|</span>Golang
             <span className="px-2">|</span>Python(Flask)
           </p>
+          <p className="py-2">
+            <span className="font-bold">Databases</span>
+            <span className="px-2">|</span>Postgresql
+            <span className="px-2">|</span>Mongodb
+            <span className="px-2">|</span>MySql
+            <span className="px-2">|</span> Firebase
+          </p>
+          <p className="py-2">
+            <span className="font-bold">Front-End Skills</span>
+            <span className="px-2">|</span> HTML
+            <span className="px-2">|</span>CSS
+            <span className="px-2">|</span>React
+            <span className="px-2">|</span>Next js
+            <span className="px-2">|</span>Tailwind
+
+          </p>
+          
         </div>
 
         <h5 className="text-center underline text-[18px] py-4">

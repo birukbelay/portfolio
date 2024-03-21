@@ -3,8 +3,32 @@ import {LINKS} from "./myLinks";
 export const projectsData = {
 
     0: {
-        name: "Best Eats",
+        name: "Huwaa.app",
         id: '0',
+        image:"/assets/projects/huwaa.png",
+        tech: "Nest js / Mongodb ",
+        technologies: ["Nestjs", "Mongodb", "Nextjs", "Tailwind Css" ],
+        desc: ` HUWAA is a gamified platform integrating both online and offline activities to let kids 
+        learn new skills that will supplement their education while also equipping them with the 21st century skills.
+          `,
+
+        demo: LINKS.HUWAA,
+    },
+    1: {
+        name: "Qawqal",
+        id: '1',
+        image:"/assets/projects/qawqal.png",
+        tech: "Nestjs / Postgresql / Socket.io /Flutter ",
+        technologies: ["Nest js", "Postgresql", "Socket.io", "Redis", "Google Cloud Services", "Flutter", "Nextjs"],
+        desc: `  Qawqal revolutionizes convenience by merging your digital and physical worlds in one intuitive app.
+         Offering a wide range of services with a tap, it simplifies life through technology, personalized solutions, 
+         and a seamless user experience`,
+
+        demo: LINKS.BEST_EATS,
+    },
+    2: {
+        name: "Best Eats",
+        id: '2',
         image:"/assets/projects/bestEats.png",
         tech: "React JS / Tailwind ",
         technologies: ["React", "Redux", "Tailwind", ],
@@ -15,9 +39,9 @@ export const projectsData = {
 
         demo: LINKS.BEST_EATS,
     },
-    1: {
+    3: {
         name: "Trip Advisor",
-        id: '1',
+        id: '3',
         image:"/assets/projects/tripAdvisor.png",
         tech: "React JS / Tailwind ",
         technologies: ["React",  "Tailwind"],
@@ -26,8 +50,8 @@ export const projectsData = {
         // code: "https://github.com/birukbelay",
         demo: LINKS.TRIP_ADVISOR,
     },
-    2: {
-        id: '2',
+    4: {
+        id: '4',
         name: "My Movies",
         image:"/assets/projects/movies.png",
         tech: "React JS / Tailwind / Nodejs /Firebase /Mongodb /Nodejs",
@@ -40,8 +64,8 @@ export const projectsData = {
         demo: "https://heroku.com/",
         video: "/assets/video/movies.mp4"
 },
-    3: {
-        id: '3',
+    5: {
+        id: '5',
         image:"/assets/projects/property.jpg",
         name: "Bet-Lembosa Real-Estates",
         tech: "React JS / Tailwind / Firebase / Python Flask/ Postgres",
@@ -55,6 +79,6 @@ export const projectsData = {
         account with an email address in order to save your favorite
         properties. `,
         // code: "https://github.com/",
-        demo: "https://heroku.com/",
+        demo: "https://heroku.com/property",
     }
 };

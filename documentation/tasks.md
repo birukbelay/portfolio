@@ -1,0 +1,7 @@
+- [x] make portfolio
+- [x] make the data and ui separate
+- [ ] add firebase as a datastore 
+- [ ] and google signin as a sing in provider
+- [ ] add an image gallery for the projects
+- [ ] update the ui to inphesize on the resume and social media links
+- [ ] make the email work and send email

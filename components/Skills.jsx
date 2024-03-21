@@ -2,18 +2,24 @@ import React from "react";
 import Image from "next/image";
 
 const skillsArr = [
+  { name: "Nodejs", image: "/assets/skills/node.png" },
+  { name: "Nest js", image: "/assets/skills/nestjs.png" },
+  { name: "Golang", image: "/assets/skills/golang.png" },
+  { name: "flask", image: "/assets/skills/flask.png" },
+  { name: "Postgresql", image: "/assets/skills/Postgresql.png" },
+  { name: "mysql", image: "/assets/skills/sql.png" },
+  { name: "mongo", image: "/assets/skills/mongo.png" },
+  { name: "firebase", image: "/assets/skills/firebase.png" },
+  { name: "React", image: "/assets/skills/react.png" },
+  { name: "Next js", image: "/assets/skills/nextjs.png" },
+  { name: "Redux Toolkit", image: "/assets/skills/redux.webp" },
+  { name: "Tailwind Css", image: "/assets/skills/tailwind.png" },
   { name: "Html", image: "/assets/skills/html.png" },
   { name: "Css", image: "/assets/skills/css.png" },
   { name: "Javascipt", image: "/assets/skills/javascript.png" },
-  { name: "Tailwind Css", image: "/assets/skills/tailwind.png" },
-  { name: "React", image: "/assets/skills/react.png" },
-  { name: "Next js", image: "/assets/skills/nextjs.png" },
-  { name: "Nodejs", image: "/assets/skills/node.png" },
-  { name: "Golang", image: "/assets/skills/golang.png" },
-  { name: "flask", image: "/assets/skills/flask.png" },
-  { name: "firebase", image: "/assets/skills/firebase.png" },
-  { name: "mongo", image: "/assets/skills/mongo.png" },
-  { name: "sql", image: "/assets/skills/sql.png" },
+  
+  
+ 
 ];
 
 const Skills = () => {
