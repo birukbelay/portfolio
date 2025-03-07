@@ -66,9 +66,9 @@ const Project = ({ project }) => {
           {project.code ? <a href={project.code} target="_blank" rel="noreferrer">
             <button className="px-8 py-2 mt-4 mr-8">Code</button>
           </a> :""}
-          <a href={project.demo} target="_blank" rel="noreferrer">
+          {project.demo ? <a href={project.demo} target="_blank" rel="noreferrer">
             <button className="px-8 py-2 mt-4">Demo</button>
-          </a>
+          </a>:""}
 
           {project.video ?
               <video className=' pt-8 shadow-xl shadow-gray-400 rounded-xl py-4 ' autoPlay={true} loop muted id='video'>

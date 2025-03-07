@@ -1,6 +1,6 @@
 import React from "react";
 import { AiOutlineMail , AiFillFilePdf} from "react-icons/ai";
-import { FaLinkedinIn, FaGithub } from "react-icons/fa";
+import { FaLinkedinIn, FaGithub, FaMedium } from "react-icons/fa";
 import { BsReverseLayoutTextSidebarReverse } from "react-icons/bs";
 import Link from "next/link";
 import {LINKS} from "../data/myLinks";
@@ -23,7 +23,8 @@ export const Main = () => {
           </p>
           <div className="flex items-center justify-between max-w-[330px] m-auto py-4">
             <MainCircleIcon link={LINKS.LINKEDIN_URL} icon={<FaLinkedinIn />} />
-            <MainCircleIcon link={LINKS.LINKEDIN_URL} icon={<FaGithub />} />
+            <MainCircleIcon link={LINKS.GITHUB_URL} icon={<FaGithub />} />
+            <MainCircleIcon link={LINKS.MediumUrl} icon={<FaMedium />} />
             <MainCircleLink link={"/#contact"} icon={<AiOutlineMail  />} />
             <MainCircleLink link={"/resume"} icon={<BsReverseLayoutTextSidebarReverse />}/>
 

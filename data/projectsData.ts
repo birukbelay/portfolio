@@ -6,7 +6,7 @@ export const projectsData = {
         name: "Huwaa.app",
         id: '0',
         image:"/assets/projects/huwaa.png",
-        tech: "Nest js / Mongodb ",
+        tech: "Nest js / Next js / Mongodb ",
         technologies: ["Nestjs", "Mongodb", "Nextjs", "Tailwind Css" ],
         desc: ` HUWAA is a gamified platform integrating both online and offline activities to let kids 
         learn new skills that will supplement their education while also equipping them with the 21st century skills.
@@ -18,13 +18,13 @@ export const projectsData = {
         name: "Qawqal",
         id: '1',
         image:"/assets/projects/qawqal.png",
-        tech: "Nestjs / Postgresql / Socket.io /Flutter ",
+        tech: "Nestjs / Postgresql / Graphql /Flutter ",
         technologies: ["Nest js", "Postgresql", "Socket.io", "Redis", "Google Cloud Services", "Flutter", "Nextjs"],
         desc: `  Qawqal revolutionizes convenience by merging your digital and physical worlds in one intuitive app.
          Offering a wide range of services with a tap, it simplifies life through technology, personalized solutions, 
          and a seamless user experience`,
 
-        demo: LINKS.BEST_EATS,
+        demo: LINKS.QAWQAL,
     },
     2: {
         name: "Best Eats",
@@ -61,7 +61,7 @@ export const projectsData = {
         On the backend it uses mongodb for data storage and uses firebase Bucket for image uploads .
         this project was uploaded to heroku and uses mongodb atlas for data storage`,
         // code: "https://github.com/birukbelay",
-        demo: "https://heroku.com/",
+      
         video: "/assets/video/movies.mp4"
 },
     5: {
@@ -79,6 +79,6 @@ export const projectsData = {
         account with an email address in order to save your favorite
         properties. `,
         // code: "https://github.com/",
-        demo: "https://heroku.com/property",
+        // demo: "https://heroku.com/property",
     }
 };

@@ -12,6 +12,7 @@ const skillsArr = [
   { name: "firebase", image: "/assets/skills/firebase.png" },
   { name: "React", image: "/assets/skills/react.png" },
   { name: "Next js", image: "/assets/skills/nextjs.png" },
+  { name: "Aws", image: "/assets/skills/aws.png" },
   { name: "Redux Toolkit", image: "/assets/skills/redux.webp" },
   { name: "Tailwind Css", image: "/assets/skills/tailwind.png" },
   { name: "Html", image: "/assets/skills/html.png" },

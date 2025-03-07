@@ -31,7 +31,7 @@ export const Experiances =[
     {
         title: 'Backend developer |  EDit Educational Services, edit.et',
         location: 'Addis Ababa, Ethiopia: remote',
-        timeFrame :'2023 - Current)',
+        timeFrame :'2023 - 2024)',
         keyTasks :[
             `Developing the backend system of huwaa.app a gamified platform for kids to learn while playing using nestjs`,
             `Making the design of the system`,

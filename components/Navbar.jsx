@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/dist/client/image";
 import Link from "next/link";
 import { AiOutlineClose, AiOutlineMenu, AiOutlineMail } from "react-icons/ai";
-import { FaLinkedinIn, FaGithub } from "react-icons/fa";
+import { FaLinkedinIn, FaGithub, FaMedium } from "react-icons/fa";
 import {BsFillPersonLinesFill, BsReverseLayoutTextSidebarReverse} from "react-icons/bs";
 import {LINKS} from "../data/myLinks";
 import {MainCircleIcon, MainCircleLink} from "./Main";
@@ -56,6 +56,9 @@ const Navbar = () => {
             </Link>
             <Link href="/#projects">
               <li className={styles.navBarLink}>Project</li>
+            </Link>
+            <Link href={LINKS.MediumUrl}>
+              <li className={styles.navBarLink}>Articles</li>
             </Link>
             <Link href="/#contact">
               <li className={styles.navBarLink}>Contacts</li>
@@ -133,6 +136,11 @@ const Navbar = () => {
                   Projects
                 </li>
               </Link>
+              <Link href={LINKS.MediumUrl}>
+                <li onClick={() => setNav(false)} className="py-4 text-sm">
+                  Articles
+                </li>
+              </Link>
               <Link href="/#contact">
                 <li onClick={() => setNav(false)} className="py-4 text-sm">
                   Contact
@@ -154,6 +162,7 @@ const Navbar = () => {
               <div className="flex items-center justify-evenly my-4 w-full sm:w-[90%]">
                 <MainCircleIcon small={true} link={LINKS.LINKEDIN_URL} icon={<FaLinkedinIn />} />
                 <MainCircleIcon small={true} link={LINKS.LINKEDIN_URL} icon={<FaGithub />} />
+                <MainCircleIcon small={true} link={LINKS.MediumUrl} icon={<FaMedium />} />
                 <MainCircleLink small={true} link={"/#contact"} icon={<AiOutlineMail  />} />
                 <MainCircleLink small={true} link={"/resume"} icon={<BsReverseLayoutTextSidebarReverse />}/>
 
