@@ -21,7 +21,7 @@ export const Main = () => {
             {" "}
             I’m a Software Engineer with Extensive experiance in developing high quality frontend and backend applications.
           </p>
-          <div className="flex items-center justify-between max-w-[330px] m-auto py-4">
+          <div className="flex items-center justify-between max-w-[430px] m-auto py-4">
             <MainCircleIcon link={LINKS.LINKEDIN_URL} icon={<FaLinkedinIn />} />
             <MainCircleIcon link={LINKS.GITHUB_URL} icon={<FaGithub />} />
             <MainCircleIcon link={LINKS.MediumUrl} icon={<FaMedium />} />
