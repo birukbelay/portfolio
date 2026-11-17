@@ -17,6 +17,7 @@ import {
 } from "react-icons/lu";
 import { ButtonLink, Card, Badge } from "@/components/admin/ui";
 import { splitTitle } from "@/lib/experience";
+import { htmlToText } from "@/lib/richtext";
 
 export default async function AdminDashboardPage() {
   const session = await auth();
@@ -30,14 +31,14 @@ export default async function AdminDashboardPage() {
 
   // What a recruiter looks for when they land on the site.
   const checklist = [
-    { done: !!resume?.about && resume.about.length > 120, label: "Write a professional summary", href: "/admin/resume" },
+    { done: htmlToText(resume?.about || "").length > 120, label: "Write a professional summary", href: "/admin/resume" },
     { done: !!resume?.resumeLink, label: "Link a downloadable resume", href: "/admin/resume" },
     { done: !!resume?.linkedinUrl && !!resume?.githubUrl, label: "Add LinkedIn and GitHub", href: "/admin/resume" },
     { done: projects.length >= 3, label: "Showcase at least 3 projects", href: "/admin/projects" },
     { done: projects.filter((p) => p.demo || p.code).length >= 3, label: "Add live demo or code links to 3 projects", href: "/admin/projects" },
     {
-      done: experiences.length > 0 && experiences.every((e) => e.keyTasks.length >= 2),
-      label: "Give every role at least 2 highlights",
+      done: experiences.length > 0 && experiences.every((e) => e.keyTasks.length >= 3),
+      label: "Give every role a summary and 2+ highlights",
       href: "/admin/experiences",
     },
   ];

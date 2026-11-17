@@ -3,6 +3,7 @@ import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
 import RevealObserver from "@/components/site/RevealObserver";
+import { MotionEffects } from "@/components/site/Motion";
 import "@/styles/globals.css";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <RevealObserver />
+        <MotionEffects />
         <Navbar />
         {children}
         <Footer />

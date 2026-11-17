@@ -1,8 +1,10 @@
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { LuArrowDown, LuArrowRight, LuArrowUpRight, LuDownload, LuGithub, LuLinkedin, LuMail, LuServer, LuLayoutTemplate, LuPalette } from "react-icons/lu";
 import { FaMedium } from "react-icons/fa";
 import ExperienceEntry, { type ExperienceData } from "./ExperienceEntry";
+import { CountUp, TimelineRail } from "./Motion";
 
 // ---------------------------------------------------------------- types
 export interface Profile {
@@ -57,6 +59,10 @@ function Section({ id, children, className = "" }: { id: string; children: React
 const cleanText = (t: string) => t.replace(/\s+/g, " ").trim();
 
 // ---------------------------------------------------------------- Hero
+const HEADLINE = "I build reliable *backends and interfaces people *enjoy using."
+  .split(" ")
+  .map((w) => ({ text: w.replace("*", ""), accent: w.startsWith("*") }));
+
 export function Hero({ profile, stack, stats }: { profile: Profile; stack: string[]; stats: { value: string; label: string }[] }) {
   const role = profile.titles[0] || "Software Engineer";
   const socials = [
@@ -69,7 +75,8 @@ export function Hero({ profile, stack, stats }: { profile: Profile; stack: strin
     <section id="top" className="relative overflow-hidden px-6 pb-16 pt-36 md:pt-44">
       {/* Backdrop */}
       <div aria-hidden className="bg-grid absolute inset-0 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,black,transparent)]" />
-      <div aria-hidden className="absolute -top-40 right-[-10%] h-[520px] w-[520px] rounded-full bg-accent/20 blur-[120px]" />
+      <div aria-hidden className="absolute -top-40 right-[-10%] h-[520px] w-[520px] animate-float rounded-full bg-accent/20 blur-[120px]" />
+      <div aria-hidden className="absolute left-[-15%] top-1/2 h-[380px] w-[380px] animate-float rounded-full bg-accent/10 blur-[110px] [animation-delay:-9s]" />
 
       <div className="relative mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <div className="min-w-0">
@@ -83,8 +90,17 @@ export function Hero({ profile, stack, stats }: { profile: Profile; stack: strin
           <p className="mt-8 animate-fade-up font-mono text-sm text-muted [animation-delay:80ms]">
             {profile.fullName} — {role}
           </p>
-          <h1 className="mt-4 animate-fade-up font-display text-[2.9rem] leading-[1.02] tracking-tight text-ink [animation-delay:140ms] sm:text-6xl lg:text-7xl">
-            I build reliable <em className="text-accent">backends</em> and interfaces people <em className="text-accent">enjoy</em> using.
+          <h1 className="mt-4 font-display text-[2.9rem] leading-[1.02] tracking-tight text-ink sm:text-6xl lg:text-7xl" aria-label={HEADLINE.map((w) => w.text).join(" ")}>
+            {HEADLINE.map((w, i) => (
+              <React.Fragment key={i}>
+                <span aria-hidden className="inline-block overflow-hidden pb-[0.08em] align-bottom">
+                  <span className="inline-block animate-word-rise" style={{ animationDelay: `${160 + i * 70}ms` }}>
+                    {w.accent ? <em className="pr-[0.04em] text-accent">{w.text}</em> : w.text}
+                  </span>
+                </span>
+                {i < HEADLINE.length - 1 && " "}
+              </React.Fragment>
+            ))}
           </h1>
           <p className="mt-6 max-w-xl animate-fade-up text-lg leading-relaxed text-muted [animation-delay:220ms]">
             Full-stack engineer shipping production systems end to end — real-time chat, subscription engines, and the web
@@ -116,7 +132,7 @@ export function Hero({ profile, stack, stats }: { profile: Profile; stack: strin
         {stats.map((s, i) => (
           <div key={s.label} className={`p-6 ${i % 2 ? "border-l" : ""} ${i >= 2 ? "border-t md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""} border-line`}>
             <dt className="sr-only">{s.label}</dt>
-            <dd className="font-display text-4xl tracking-tight text-ink sm:text-5xl">{s.value}</dd>
+            <dd className="font-display text-4xl tracking-tight text-ink sm:text-5xl"><CountUp value={s.value} /></dd>
             <dd className="mt-1 text-sm text-muted">{s.label}</dd>
           </div>
         ))}
@@ -143,18 +159,27 @@ function CodeCard({ name, role, stack }: { name: string; role: string; stack: st
         </div>
         <pre className="whitespace-pre-wrap break-words p-5 font-mono text-[13px] leading-7 text-white/85 sm:text-sm">
           <code>
-            {c("// hi there 👋")}
-            {"\n"}
-            {k("export const")} engineer {c("=")} {"{"}
-            {"\n  "}{p("name")}{c(":")} {s(name)}{c(",")}
-            {"\n  "}{p("role")}{c(":")} {s(role)}{c(",")}
-            {"\n  "}{p("stack")}{c(":")} [{stack.map((t, i) => (
-              <span key={t}>{s(t)}{i < stack.length - 1 ? c(", ") : ""}</span>
-            ))}]{c(",")}
-            {"\n  "}{p("ships")}{c(":")} [{s("APIs")}{c(", ")}{s("real-time")}{c(", ")}{s("web apps")}]{c(",")}
-            {"\n  "}{p("remote")}{c(":")} <span className="text-[#fdba74]">true</span>{c(",")}
-            {"\n"}{"}"}{c(";")}
-            <span className="ml-1 inline-block h-4 w-2 translate-y-0.5 animate-pulse bg-accent" />
+            {[
+              <>{c("// hi there 👋")}</>,
+              <>{k("export const")} engineer {c("=")} {"{"}</>,
+              <>{"  "}{p("name")}{c(":")} {s(name)}{c(",")}</>,
+              <>{"  "}{p("role")}{c(":")} {s(role)}{c(",")}</>,
+              <>
+                {"  "}{p("stack")}{c(":")} [{stack.map((t, i) => (
+                  <span key={t}>{s(t)}{i < stack.length - 1 ? c(", ") : ""}</span>
+                ))}]{c(",")}
+              </>,
+              <>{"  "}{p("ships")}{c(":")} [{s("APIs")}{c(", ")}{s("real-time")}{c(", ")}{s("web apps")}]{c(",")}</>,
+              <>{"  "}{p("remote")}{c(":")} <span className="text-[#fdba74]">true</span>{c(",")}</>,
+              <>
+                {"}"}{c(";")}
+                <span className="ml-1 inline-block h-4 w-2 translate-y-0.5 animate-pulse bg-accent" />
+              </>,
+            ].map((line, i) => (
+              <span key={i} className="block animate-type" style={{ animationDelay: `${700 + i * 260}ms` }}>
+                {line}
+              </span>
+            ))}
           </code>
         </pre>
       </div>
@@ -203,7 +228,7 @@ export function About() {
         </div>
         <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
           {FOCUS.map(({ icon: Icon, title, body }, i) => (
-            <div key={title} data-reveal style={{ transitionDelay: `${i * 80}ms` }} className="card p-6 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-ink/5">
+            <div key={title} data-reveal data-spotlight style={{ transitionDelay: `${i * 80}ms` }} className="card p-6 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-ink/5">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
                 <Icon size={20} />
               </span>
@@ -227,12 +252,13 @@ export function Experience({ items }: { items: (ExperienceData & { id: string })
           Full résumé <LuArrowUpRight size={15} />
         </Link>
       </SectionHeader>
-      <div className="relative mx-auto max-w-4xl space-y-12 before:absolute before:bottom-2 before:left-[5px] before:top-2 before:w-px before:bg-line">
+      <div className="relative mx-auto max-w-4xl space-y-12">
         {items.map((exp) => (
-          <div key={exp.id} data-reveal>
+          <div key={exp.id} data-reveal className="relative z-10">
             <ExperienceEntry data={exp} maxTasks={3} />
           </div>
         ))}
+        <TimelineRail className="bottom-2 left-[5px] top-2" />
       </div>
     </Section>
   );
@@ -290,7 +316,7 @@ function Chips({ items, max = 4 }: { items: string[]; max?: number }) {
 
 function FeaturedProject({ project }: { project: ProjectCard }) {
   return (
-    <article data-reveal className="card group grid overflow-hidden lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+    <article data-reveal data-spotlight className="card group grid overflow-hidden lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
       <Link href={`/${project.id}`} className="relative block aspect-[16/10] overflow-hidden bg-line/40 lg:aspect-auto lg:min-h-[420px]">
         <Image src={project.image} alt={project.name} fill priority sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover transition duration-700 group-hover:scale-[1.03]" />
         <span className="absolute left-4 top-4 rounded-full bg-accent px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-accent-ink">Featured</span>
@@ -312,7 +338,7 @@ function FeaturedProject({ project }: { project: ProjectCard }) {
 
 function ProjectTile({ project, delay }: { project: ProjectCard; delay: number }) {
   return (
-    <article data-reveal style={{ transitionDelay: `${delay}ms` }} className="card group flex flex-col overflow-hidden transition hover:shadow-2xl hover:shadow-ink/5">
+    <article data-reveal data-spotlight style={{ transitionDelay: `${delay}ms` }} className="card group flex flex-col overflow-hidden transition hover:shadow-2xl hover:shadow-ink/5">
       <Link href={`/${project.id}`} className="relative block aspect-[16/10] overflow-hidden bg-line/40">
         <Image src={project.image} alt={project.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
       </Link>
@@ -370,9 +396,10 @@ export function Skills({ skills }: { skills: SkillItem[] }) {
   return (
     <Section id="skills" className="bg-surface/50">
       <SectionHeader index="04" label="Toolkit" title="The tools I reach for to ship." />
+      <SkillMarquee skills={skills} />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {groups.map(([cat, items], i) => (
-          <div key={cat} data-reveal style={{ transitionDelay: `${i * 70}ms` }} className="card p-6">
+          <div key={cat} data-reveal data-spotlight style={{ transitionDelay: `${i * 70}ms` }} className="card p-6">
             <h3 className="font-mono text-xs uppercase tracking-wider text-muted">{cat}</h3>
             <ul className="mt-5 space-y-3">
               {items.map((s) => (
@@ -395,6 +422,28 @@ export function Skills({ skills }: { skills: SkillItem[] }) {
   );
 }
 
+/** An endless, slowly scrolling strip of skill logos (pauses on hover). */
+function SkillMarquee({ skills }: { skills: SkillItem[] }) {
+  const items = skills.filter((s) => s.image);
+  if (items.length < 4) return null;
+  return (
+    <div
+      data-reveal
+      className="group relative -mx-6 mb-10 overflow-hidden py-2 [mask-image:linear-gradient(90deg,transparent,black_12%,black_88%,transparent)]"
+      aria-hidden
+    >
+      <div className="flex w-max animate-marquee gap-3 group-hover:[animation-play-state:paused]">
+        {[...items, ...items].map((s, i) => (
+          <span key={i} className="chip shrink-0 gap-2 px-4 py-2 text-sm">
+            <Image src={s.image} alt="" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
+            <span className="capitalize">{s.name}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------- Contact
 export function Contact({ profile }: { profile: Profile }) {
   const actions = [
@@ -406,7 +455,7 @@ export function Contact({ profile }: { profile: Profile }) {
   return (
     <section id="contact" className="scroll-mt-24 px-6 py-24 md:py-32">
       <div data-reveal className="relative mx-auto max-w-6xl overflow-hidden rounded-[32px] bg-deep px-8 py-16 text-white sm:px-14 sm:py-20">
-        <div aria-hidden className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-accent/40 blur-[100px]" />
+        <div aria-hidden className="absolute -right-24 -top-24 h-80 w-80 animate-float rounded-full bg-accent/40 blur-[100px]" />
         <div aria-hidden className="absolute inset-0 opacity-[.07]" style={{ backgroundImage: "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)", backgroundSize: "56px 56px" }} />
         <div className="relative max-w-3xl">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-white/50">

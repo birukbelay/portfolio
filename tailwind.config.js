@@ -46,6 +46,23 @@ module.exports = {
           from: { opacity: "0", transform: "scale(.97)" },
           to: { opacity: "1", transform: "scale(1)" },
         },
+        "word-rise": {
+          from: { opacity: "0", transform: "translateY(0.45em) rotate(2deg)", filter: "blur(6px)" },
+          to: { opacity: "1", transform: "none", filter: "blur(0)" },
+        },
+        type: {
+          from: { clipPath: "inset(0 100% 0 0)" },
+          to: { clipPath: "inset(0 0 0 0)" },
+        },
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+        float: {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "33%": { transform: "translate(-30px, 20px) scale(1.06)" },
+          "66%": { transform: "translate(20px, -15px) scale(.96)" },
+        },
         pulse_dot: {
           "0%, 100%": { boxShadow: "0 0 0 0 rgb(34 197 94 / .55)" },
           "50%": { boxShadow: "0 0 0 6px rgb(34 197 94 / 0)" },
@@ -57,6 +74,10 @@ module.exports = {
         "slide-in-right": "slide-in-right .28s cubic-bezier(.2,.7,.2,1) both",
         "scale-in": "scale-in .18s ease-out both",
         "pulse-dot": "pulse_dot 2s ease-in-out infinite",
+        "word-rise": "word-rise .8s cubic-bezier(.2,.7,.2,1) both",
+        type: "type .5s steps(28, end) both",
+        marquee: "marquee 40s linear infinite",
+        float: "float 18s ease-in-out infinite",
       },
     },
   },

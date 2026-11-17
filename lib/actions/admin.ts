@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { write, WriteError } from "@/lib/db";
 import { canonicalAssetUrl } from "@/lib/storage";
+import { sanitizeSummary } from "@/lib/richtext.server";
 import { projects, skills, experiences, resumeInfo } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -173,7 +174,7 @@ async function saveResumeInfoImpl(data: {
 
   const fields = {
     fullName: data.fullName,
-    about: data.about,
+    about: sanitizeSummary(data.about),
     titles: JSON.stringify(data.titles),
     resumeLink: data.resumeLink || null,
     linkedinUrl: data.linkedinUrl || null,

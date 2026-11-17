@@ -8,6 +8,8 @@ import ExperienceEntry from "@/components/site/ExperienceEntry";
 import PrintButton from "@/components/site/PrintButton";
 import { groupSkills } from "@/components/site/HomeSections";
 import { LINKS } from "@/data/myLinks";
+import { htmlToText } from "@/lib/richtext";
+import { sanitizeSummary } from "@/lib/richtext.server";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const resume = await getResumeInfo();
   return {
     title: `Résumé — ${resume?.fullName || "Biruk Kassa"}`,
-    description: resume?.about?.replace(/\s+/g, " ").slice(0, 160) || "Full-stack software engineer résumé",
+    description: htmlToText(resume?.about || "").slice(0, 160) || "Full-stack software engineer résumé",
   };
 }
 
@@ -26,7 +28,7 @@ export default async function ResumePage() {
 
   const fullName = resume?.fullName || "Biruk B Kassa";
   const titles = resume?.titles?.length ? resume.titles : ["Software Engineer"];
-  const about = (resume?.about || "").replace(/\s*\n\s*/g, " ").trim();
+  const about = sanitizeSummary(resume?.about || "");
   const links = [
     LINKS.EMAIL && { href: `mailto:${LINKS.EMAIL}`, text: LINKS.EMAIL, icon: LuMail },
     (resume?.linkedinUrl || LINKS.LINKEDIN_URL) && { href: resume?.linkedinUrl || LINKS.LINKEDIN_URL, icon: LuLinkedin },
@@ -78,7 +80,7 @@ export default async function ResumePage() {
         {/* Summary */}
         {about && (
           <ResumeSection title="Summary">
-            <p className="leading-relaxed text-ink/80">{about}</p>
+            <div className="rich leading-relaxed text-ink/80" dangerouslySetInnerHTML={{ __html: about }} />
           </ResumeSection>
         )}
 

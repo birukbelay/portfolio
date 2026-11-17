@@ -200,13 +200,16 @@ function ExperienceRow({
           {(place || mode !== "On-site") && (
             <span className="inline-flex items-center gap-1.5"><LuMapPin size={13} />{formatLocation(place, mode)}</span>
           )}
-          <span>{exp.keyTasks.length} highlight{exp.keyTasks.length === 1 ? "" : "s"}</span>
+          <span>{Math.max(0, exp.keyTasks.length - 1)} highlight{exp.keyTasks.length === 2 ? "" : "s"}</span>
         </div>
 
-        {shown.length > 0 && (
-          <ul className="mt-3 space-y-1.5 text-[13px] leading-relaxed text-zinc-600">
-            {shown.map((t, i) => (
-              <li key={i} className={`relative pl-4 ${expanded ? "" : "line-clamp-2"}`}>
+        {shown[0] && (
+          <p className={`mt-3 text-[13px] leading-relaxed text-zinc-700 ${expanded ? "" : "line-clamp-2"}`}>{shown[0].replace(/\s+/g, " ")}</p>
+        )}
+        {shown.length > 1 && (
+          <ul className="ml-1 mt-2 space-y-1.5 border-l-2 border-zinc-100 pl-3 text-[13px] leading-relaxed text-zinc-600">
+            {shown.slice(1).map((t, i) => (
+              <li key={i} className={`relative pl-3 ${expanded ? "" : "line-clamp-2"}`}>
                 <span className="absolute left-0 top-[0.6em] h-1 w-1 rounded-full bg-zinc-400" />
                 {t.replace(/\s+/g, " ")}
               </li>
@@ -515,8 +518,8 @@ function ExperienceEditor({
             <div className="flex gap-3 rounded-lg border border-amber-200/70 bg-amber-50/60 p-3 text-xs leading-relaxed text-amber-900">
               <LuLightbulb size={16} className="mt-0.5 shrink-0 text-amber-500" />
               <p>
-                Recruiters skim. Start each point with a strong verb and show impact with numbers — e.g.{" "}
-                <em>“Cut API response times by 40% by adding Redis caching.”</em> Aim for 3–5 points.
+                Recruiters skim. Open with a one-line summary of the role, then 3–5 highlights that start with a strong
+                verb and show impact with numbers — e.g. <em>“Cut API response times by 40% by adding Redis caching.”</em>
               </p>
             </div>
             <TaskList tasks={f.tasks} onChange={(tasks) => set("tasks", tasks)} />
@@ -621,52 +624,64 @@ function TaskList({ tasks, onChange }: { tasks: string[]; onChange: (t: string[]
     setFocusIndex(i + merged.length - 1);
   };
 
-  return (
-    <div className="space-y-2">
-      {tasks.map((task, i) => (
-        <div key={i} className="group flex items-start gap-2">
-          <span className="mt-2.5 w-5 shrink-0 text-right font-mono text-xs text-zinc-400">{i + 1}.</span>
-          <div className="relative flex-1">
-            <AutoTextarea
-              ref={(el) => { refs.current[i] = el; }}
-              value={task}
-              onChange={(v) => update(i, v)}
-              onPaste={(e) => onPaste(i, e)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  insertAfter(i);
-                } else if (e.key === "Backspace" && task === "" && tasks.length > 1) {
-                  e.preventDefault();
-                  remove(i);
-                } else if (e.altKey && e.key === "ArrowUp") {
-                  e.preventDefault();
-                  moveTask(i, -1);
-                } else if (e.altKey && e.key === "ArrowDown") {
-                  e.preventDefault();
-                  moveTask(i, 1);
-                }
-              }}
-              placeholder={i === 0 ? "Built a real-time chat service with Socket.io serving 50k+ users…" : "Another achievement…"}
-            />
-            {task.length > TASK_SOFT_LIMIT * 0.8 && (
-              <span className={`pointer-events-none absolute bottom-1.5 right-2 font-mono text-[10px] ${task.length > TASK_SOFT_LIMIT ? "text-amber-600" : "text-zinc-400"}`}>
-                {task.length}/{TASK_SOFT_LIMIT}
-              </span>
-            )}
-          </div>
-          <div className="mt-1 flex shrink-0 items-center opacity-40 transition group-focus-within:opacity-100 group-hover:opacity-100">
-            <IconButton label="Move up (Alt+↑)" onClick={() => moveTask(i, -1)} disabled={i === 0}><LuArrowUp size={14} /></IconButton>
-            <IconButton label="Move down (Alt+↓)" onClick={() => moveTask(i, 1)} disabled={i === tasks.length - 1}><LuArrowDown size={14} /></IconButton>
-            <IconButton label="Remove" onClick={() => remove(i)} danger disabled={tasks.length === 1 && !task}><LuTrash2 size={14} /></IconButton>
-          </div>
+  const renderItem = (task: string, i: number) => (
+      <div key={i} className="group flex items-start gap-2">
+        {i > 0 && <span className="mt-2.5 w-5 shrink-0 text-right font-mono text-xs text-zinc-400">{i}.</span>}
+        <div className="relative flex-1">
+          <AutoTextarea
+            ref={(el) => { refs.current[i] = el; }}
+            value={task}
+            onChange={(v) => update(i, v)}
+            onPaste={(e) => onPaste(i, e)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                insertAfter(i);
+              } else if (e.key === "Backspace" && task === "" && tasks.length > 1) {
+                e.preventDefault();
+                remove(i);
+              } else if (e.altKey && e.key === "ArrowUp") {
+                e.preventDefault();
+                moveTask(i, -1);
+              } else if (e.altKey && e.key === "ArrowDown") {
+                e.preventDefault();
+                moveTask(i, 1);
+              }
+            }}
+            placeholder={i === 0 ? "What the company or product is, and your role in one or two sentences…" : i === 1 ? "Built a real-time chat service with Socket.io serving 50k+ users…" : "Another achievement…"}
+          />
+          {task.length > TASK_SOFT_LIMIT * 0.8 && (
+            <span className={`pointer-events-none absolute bottom-1.5 right-2 font-mono text-[10px] ${task.length > TASK_SOFT_LIMIT ? "text-amber-600" : "text-zinc-400"}`}>
+              {task.length}/{TASK_SOFT_LIMIT}
+            </span>
+          )}
         </div>
-      ))}
+        <div className="mt-1 flex shrink-0 items-center opacity-40 transition group-focus-within:opacity-100 group-hover:opacity-100">
+          <IconButton label="Move up (Alt+↑)" onClick={() => moveTask(i, -1)} disabled={i === 0}><LuArrowUp size={14} /></IconButton>
+          <IconButton label="Move down (Alt+↓)" onClick={() => moveTask(i, 1)} disabled={i === tasks.length - 1}><LuArrowDown size={14} /></IconButton>
+          <IconButton label="Remove" onClick={() => remove(i)} danger disabled={tasks.length === 1 && !task}><LuTrash2 size={14} /></IconButton>
+        </div>
+      </div>
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1.5">
+        <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Summary</p>
+        {renderItem(tasks[0] ?? "", 0)}
+      </div>
+      <div className="space-y-2">
+        <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Highlights</p>
+        <div className="ml-2 space-y-2 border-l-2 border-zinc-100 pl-3">
+          {tasks.slice(1).map((task, j) => renderItem(task, j + 1))}
+          {tasks.length === 1 && <p className="py-1 text-xs text-zinc-400">No highlights yet.</p>}
+        </div>
+      </div>
       <div className="flex flex-wrap items-center justify-between gap-2 pl-7 pt-1">
         <Button type="button" variant="secondary" size="sm" icon={<LuPlus size={14} />} onClick={() => insertAfter(tasks.length - 1)}>
           Add highlight
         </Button>
-        <p className="text-[11px] text-zinc-400">Enter adds a new point · paste a list to split it into points</p>
+        <p className="text-[11px] text-zinc-400">Enter adds a highlight · paste a list to split it into highlights</p>
       </div>
     </div>
   );

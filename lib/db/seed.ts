@@ -18,6 +18,7 @@ const initialSkills = [
   { name: "React", image: "/assets/skills/react.png", category: "Front-End" },
   { name: "Next js", image: "/assets/skills/nextjs.png", category: "Front-End" },
   { name: "Aws", image: "/assets/skills/aws.png", category: "Tools / Cloud" },
+  { name: "Kubernetes", image: "/assets/skills/kubernetes.png", category: "Tools / Cloud" },
   { name: "Redux Toolkit", image: "/assets/skills/redux.webp", category: "Front-End" },
   { name: "Tailwind Css", image: "/assets/skills/tailwind.png", category: "Front-End" },
   { name: "Html", image: "/assets/skills/html.png", category: "Front-End" },

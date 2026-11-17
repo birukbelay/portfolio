@@ -8,7 +8,7 @@ export interface ExperienceData {
   keyTasks: string[];
 }
 
-/** One role on the timeline. Uses the public-site color tokens. */
+/** One role on the timeline: header, summary paragraph, indented highlights. Uses the public-site color tokens. */
 export default function ExperienceEntry({
   data,
   maxTasks,
@@ -20,7 +20,10 @@ export default function ExperienceEntry({
 }) {
   const { role, company } = splitTitle(data.title);
   const current = isCurrent(data.timeFrame);
-  const tasks = maxTasks ? data.keyTasks.slice(0, maxTasks) : data.keyTasks;
+  // First item is a one-paragraph summary of the role; the rest are indented highlights.
+  const items = data.keyTasks.map((t) => t.replace(/\s+/g, " ").trim()).filter(Boolean);
+  const [summary, ...allHighlights] = items;
+  const highlights = maxTasks ? allHighlights.slice(0, Math.max(0, maxTasks - 1)) : allHighlights;
 
   return (
     <article className="relative pl-8">
@@ -59,12 +62,15 @@ export default function ExperienceEntry({
         )}
       </div>
 
-      {tasks.length > 0 && (
-        <ul className={`mt-3 space-y-2 ${compact ? "text-sm" : "text-[15px]"} leading-relaxed text-ink/80`}>
-          {tasks.map((task, i) => (
-            <li key={i} className="relative pl-5">
-              <span aria-hidden className="absolute left-0 top-[0.7em] h-px w-2.5 bg-accent" />
-              {task.replace(/\s+/g, " ").trim()}
+      {summary && (
+        <p className={`mt-3 ${compact ? "text-sm" : "text-[15px]"} leading-relaxed text-ink/85`}>{summary}</p>
+      )}
+      {highlights.length > 0 && (
+        <ul className={`ml-1 mt-3 space-y-2 border-l border-line pl-5 ${compact ? "text-sm" : "text-[15px]"} leading-relaxed text-ink/75`}>
+          {highlights.map((task, i) => (
+            <li key={i} className="relative pl-4">
+              <span aria-hidden className="absolute left-0 top-[0.7em] h-px w-2 bg-accent" />
+              {task}
             </li>
           ))}
         </ul>

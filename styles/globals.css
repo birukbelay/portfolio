@@ -124,6 +124,32 @@
   .card {
     @apply rounded-2xl border border-line bg-surface;
   }
+
+  /* Cursor-follow glow on cards marked data-spotlight (position set by MotionEffects) */
+  [data-spotlight] { position: relative; isolation: isolate; }
+  [data-spotlight]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--c-accent) / .12), transparent 45%);
+    opacity: 0;
+    transition: opacity .3s;
+    pointer-events: none;
+  }
+  [data-spotlight]:hover::before { opacity: 1; }
+
+  /* Rich text from the summary editor (résumé page + the editor itself) */
+  .rich > * + * { margin-top: .75em; }
+  .rich strong { font-weight: 600; color: inherit; }
+  .rich u { text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .rich a { text-decoration: underline; text-decoration-color: rgb(var(--c-accent)); text-underline-offset: 3px; }
+  .rich ul { list-style: disc; padding-left: 1.25rem; }
+  .rich ol { list-style: decimal; padding-left: 1.25rem; }
+  .rich li + li { margin-top: .25em; }
+  .rich li::marker { color: rgb(var(--c-accent)); }
+  .rich li > p { margin: 0; }
 }
 
 /* Scroll-reveal: elements start hidden only when JS is running (see components/site/Reveal.tsx). */

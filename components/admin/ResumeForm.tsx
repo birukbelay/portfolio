@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import { LuFileText, LuGithub, LuLinkedin, LuPenLine, LuX } from "react-icons/lu";
 import { saveResumeInfo } from "@/lib/actions/admin";
-import { Button, Card, CardSection, Field, Input, Textarea } from "./ui";
+import { Button, Card, CardSection, Field, Input } from "./ui";
+import RichTextEditor from "./RichTextEditor";
+import { htmlToText, summaryToHtml } from "@/lib/richtext";
 import { withToast } from "./toast";
 
 interface ResumeFormProps {
@@ -22,12 +24,7 @@ export default function ResumeForm({ initialData }: ResumeFormProps) {
   const initial = {
     fullName: initialData?.fullName || "",
     titles: initialData?.titles || [],
-    // Seed text is hard-wrapped: join single line breaks, keep blank lines as paragraphs.
-    about: (initialData?.about || "")
-      .split(/\n\s*\n/)
-      .map((p) => p.replace(/\s*\n\s*/g, " ").trim())
-      .filter(Boolean)
-      .join("\n\n"),
+    about: summaryToHtml(initialData?.about || ""),
     resumeLink: initialData?.resumeLink || "",
     linkedinUrl: initialData?.linkedinUrl || "",
     githubUrl: initialData?.githubUrl || "",
@@ -48,7 +45,7 @@ export default function ResumeForm({ initialData }: ResumeFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.fullName.trim() || !form.about.trim()) return;
+    if (!form.fullName.trim() || !htmlToText(form.about)) return;
     setSaving(true);
     try {
       await withToast(
@@ -111,8 +108,13 @@ export default function ResumeForm({ initialData }: ResumeFormProps) {
         </CardSection>
 
         <CardSection title="Summary" description="2–4 sentences. Lead with what you do and the impact you have.">
-          <Field label="Professional summary" required aside={<span className="font-mono text-[11px] text-zinc-400">{form.about.length} chars</span>}>
-            <Textarea value={form.about} onChange={(e) => set("about", e.target.value)} rows={7} required />
+          <Field
+            label="Professional summary"
+            required
+            hint="Use bold or underline sparingly to make key skills and results stand out."
+            aside={<span className="font-mono text-[11px] text-zinc-400">{htmlToText(form.about).length} chars</span>}
+          >
+            <RichTextEditor value={form.about} onChange={(html) => set("about", html)} placeholder="Professional summary" />
           </Field>
         </CardSection>
 
