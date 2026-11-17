@@ -12,7 +12,9 @@ import {
 } from "./s3.mjs";
 
 const storage = getStorageConfig();
-const localDir = path.join(process.cwd(), UPLOAD_DIR);
+// Local uploads are only read in local mode; keep them out of the deployed server bundle
+// (otherwise the whole project, public/ included, gets traced into every function).
+const localDir = path.join(/*turbopackIgnore: true*/ process.cwd(), UPLOAD_DIR);
 
 export const storageConfigured = storage !== null;
 
@@ -77,7 +79,7 @@ export async function saveUpload(buffer: Buffer, fileName: string, contentType: 
 export function resolveAssetUrl<T extends string | null | undefined>(url: T): T {
   if (!url || !url.startsWith(UPLOAD_URL_PREFIX)) return url;
   const file = url.slice(UPLOAD_URL_PREFIX.length);
-  if (!isDeployed() && fs.existsSync(path.join(localDir, file))) return url;
+  if (!isDeployed() && fs.existsSync(path.join(/*turbopackIgnore: true*/ localDir, file))) return url;
   return (storage ? publicUrlFor(storage, STORAGE_KEY_PREFIX + file) : url) as T;
 }
 
