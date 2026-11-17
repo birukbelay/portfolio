@@ -104,6 +104,13 @@ module.exports = {
           "15%": { opacity: "1" },
           "100%": { opacity: "0", transform: "translateY(110px) rotateY(900deg)" },
         },
+        "chip-spin": {
+          "0%": { transform: "translateY(0) rotate(0)" },
+          "35%": { transform: "translateY(-10px) rotate(420deg)" },
+          "70%": { transform: "translateY(0) rotate(700deg)" },
+          "85%": { transform: "translateY(-2px) rotate(726deg)" },
+          "100%": { transform: "translateY(0) rotate(720deg)" },
+        },
         "chip-roll": {
           "0%": { opacity: "0", transform: "translateX(220px) rotate(720deg)" },
           "20%": { opacity: "1" },
@@ -146,6 +153,7 @@ module.exports = {
         bulb: "bulb .5s ease-in-out infinite",
         burst: "burst 1.1s cubic-bezier(.2,.7,.3,1) both",
         "coin-fall": "coin-fall 1.2s cubic-bezier(.4,0,.8,.6) both",
+        "chip-spin": "chip-spin 1s cubic-bezier(.3,.6,.3,1) both",
         "chip-roll": "chip-roll 1s cubic-bezier(.25,.7,.3,1) both",
         "card-turn": "card-turn .6s cubic-bezier(.3,.7,.3,1) both",
         "draw-down": "draw-down 1s ease-out both",
