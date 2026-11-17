@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { LuArrowUpRight, LuBadgeCheck, LuGraduationCap, LuTrophy } from "react-icons/lu";
 import { AWARDS, CERTIFICATIONS, EDUCATION } from "@/data/credentials";
 
@@ -101,6 +101,7 @@ export function SlotMachine() {
     setPull(true);
     setTimeout(() => setPull(false), 350);
     setSpin((s) => s + 1);
+    pullLever(); // the credential lists below roll with the reels
   };
 
   const jackpot = spin > 0 && stopped >= 3;
@@ -146,7 +147,7 @@ export function SlotMachine() {
         </div>
       </div>
       {/* lever: pull to spin again */}
-      <button type="button" onClick={spinAgain} aria-label="Pull the lever to spin again" className="group flex h-28 flex-col items-center">
+      <button type="button" onClick={spinAgain} aria-label="Pull the lever to spin the reels and the credential lists" className="group flex h-28 flex-col items-center">
         <span
           className={`h-4 w-4 rounded-full bg-gradient-to-br from-[#ff6a5a] to-[#b3261e] shadow-md transition-transform duration-300 ${
             pull ? "translate-y-14" : "group-hover:-translate-y-0.5"
@@ -190,6 +191,77 @@ function Burst({ count = 24, delay = 0, seed = 1 }: { count?: number; delay?: nu
   );
 }
 
+// ================================================================ Rolling lists
+// The lever on the slot machine rolls every credential list too. A tiny store shared by both.
+let leverPulls = 0;
+const leverSubs = new Set<() => void>();
+const pullLever = () => {
+  leverPulls += 1;
+  leverSubs.forEach((f) => f());
+};
+const subscribeLever = (cb: () => void) => {
+  leverSubs.add(cb);
+  return () => {
+    leverSubs.delete(cb);
+  };
+};
+const useLeverPulls = () => useSyncExternalStore(subscribeLever, () => leverPulls, () => 0);
+
+const rotate = <T,>(list: readonly T[], k: number) => list.map((_, i) => list[(i + k) % list.length]);
+const COPIES = 3; // copies of the list stacked above the real one, so the reel has something to spin through
+
+/**
+ * A list on a slot reel: when it rolls, copies of the list (in shuffled order) whiz past and the
+ * real list lands with a bounce, like the jackpot reels. It rolls when it first scrolls into view
+ * and every time the slot machine's lever is pulled. `render(live, shift)` draws the list: `live`
+ * is true right after a landing (play the landing celebration), `shift` rotates the order for the
+ * copies.
+ */
+function ListReel({ index, render }: { index: number; render: (live: boolean, shift: number) => React.ReactNode }) {
+  const [ref, seen] = useSeen<HTMLDivElement>(0.3);
+  const pulls = useLeverPulls();
+  const roll = seen ? pulls + 1 : 0;
+  const [landed, setLanded] = useState(0);
+  const strip = useRef<HTMLDivElement>(null);
+  const spinning = roll > 0 && roll !== landed;
+
+  useEffect(() => {
+    const el = strip.current;
+    if (!el || roll === 0) return;
+    const anim = el.animate(
+      [
+        { transform: "translateY(280%)", filter: "blur(0)" },
+        { transform: "translateY(200%)", filter: "blur(2px)", offset: 0.25 },
+        { transform: "translateY(8%)", filter: "blur(1px)", offset: 0.8 },
+        { transform: "translateY(0)", filter: "blur(0)" },
+      ],
+      { duration: 1500 + index * 450, easing: "cubic-bezier(.2,.75,.3,1.08)" } // stops one after another, like the reels
+    );
+    anim.onfinish = () => setLanded(roll);
+    return () => anim.cancel();
+  }, [roll, index]);
+
+  return (
+    // clip only while spinning, so landing confetti can fly past the edges afterwards
+    <div ref={ref} className={`relative ${spinning ? "overflow-hidden" : ""}`}>
+      <div ref={strip}>
+        {spinning && (
+          <div aria-hidden inert className="absolute inset-x-0 bottom-full flex flex-col gap-6 pb-6 opacity-70">
+            {Array.from({ length: COPIES }, (_, k) => (
+              <div key={k}>{render(false, k + 1)}</div>
+            ))}
+          </div>
+        )}
+        <div key={landed}>{render(!spinning && landed > 0, 0)}</div>
+      </div>
+      {/* reel-window shading while it spins */}
+      {spinning && (
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-surface via-transparent to-surface opacity-80" />
+      )}
+    </div>
+  );
+}
+
 // ================================================================ Columns
 function Column({
   icon,
@@ -214,65 +286,68 @@ function Column({
   );
 }
 
-/**
- * Education: each entry's playing card is dealt in face-down, then turned over; the text slides
- * out from behind it and a gold thread draws down between the entries. The cap gets tossed.
- */
+const EDU_RANKS = [
+  ["A", "♠"],
+  ["K", "♥"],
+  ["Q", "♦"],
+];
+
+/** Education: the list rolls; when it lands each entry's playing card turns face-up and the cap is tossed. */
 function EducationColumn() {
-  const [ref, seen] = useSeen<HTMLUListElement>();
-  const ranks = [
-    ["A", "♠"],
-    ["K", "♥"],
-    ["Q", "♦"],
-  ];
   return (
-    <Column
-      icon={
-        <span className={`inline-block ${seen ? "animate-cap-toss" : ""}`} style={{ animationDelay: "500ms" }}>
-          <LuGraduationCap size={15} />
-        </span>
-      }
-      title="Education"
-    >
-      <ul ref={ref} className="relative space-y-6">
-        {/* gold thread linking the entries */}
-        <span
-          aria-hidden
-          className={`absolute bottom-8 left-[17px] top-8 w-0 origin-top border-l-2 border-dotted border-[#c8962c]/60 ${seen ? "animate-draw-down" : ""}`}
-          style={{ animationDelay: "700ms" }}
-        />
-        {EDUCATION.map((e, i) => {
-          const [rank, suit] = ranks[i % ranks.length];
-          const red = suit === "♥" || suit === "♦";
-          return (
-            <li key={e.title} className="relative flex gap-4">
-              {/* the card: dealt in, then turned face-up */}
-              <span aria-hidden className={`mt-0.5 shrink-0 [perspective:300px] ${seen ? "animate-deal-in" : ""}`} style={{ animationDelay: `${i * 260}ms` }}>
-                <span
-                  className={`relative block h-12 w-9 [transform-style:preserve-3d] ${seen ? "animate-card-turn" : ""}`}
-                  style={{ animationDelay: `${i * 260 + 380}ms` }}
-                >
-                  <span
-                    className={`absolute inset-0 flex flex-col items-center justify-center rounded-md border border-line bg-surface font-mono text-xs font-bold leading-none shadow-md [backface-visibility:hidden] ${red ? "text-[#e5484d]" : "text-ink"}`}
-                  >
-                    {rank}
-                    <span className="mt-0.5 text-sm">{suit}</span>
+    <Column icon={<LuGraduationCap size={15} />} title="Education">
+      <ListReel
+        index={0}
+        render={(live, shift) => (
+          <ul className="relative space-y-6">
+            {/* gold thread linking the entries */}
+            <span
+              aria-hidden
+              className={`absolute bottom-8 left-[17px] top-8 w-0 origin-top border-l-2 border-dotted border-[#c8962c]/60 ${live ? "animate-draw-down" : ""}`}
+              style={{ animationDelay: "500ms" }}
+            />
+            {rotate(EDUCATION, shift).map((e) => {
+              const i = EDUCATION.indexOf(e);
+              const [rank, suit] = EDU_RANKS[i % EDU_RANKS.length];
+              const red = suit === "♥" || suit === "♦";
+              return (
+                <li key={e.title} className="relative flex gap-4">
+                  {/* the card: lands face-down, then turns over */}
+                  <span aria-hidden className="mt-0.5 shrink-0 [perspective:300px]">
+                    <span
+                      className={`relative block h-12 w-9 [transform-style:preserve-3d] ${live ? "animate-card-turn" : ""}`}
+                      style={{ animationDelay: `${i * 220}ms` }}
+                    >
+                      <span
+                        className={`absolute inset-0 flex flex-col items-center justify-center rounded-md border border-line bg-surface font-mono text-xs font-bold leading-none shadow-md [backface-visibility:hidden] ${red ? "text-[#e5484d]" : "text-ink"}`}
+                      >
+                        {rank}
+                        <span className="mt-0.5 text-sm">{suit}</span>
+                      </span>
+                      <span
+                        className="absolute inset-0 rounded-md border border-white/20 bg-[#7a1020] shadow-md [backface-visibility:hidden] [transform:rotateY(180deg)]"
+                        style={{ backgroundImage: "repeating-linear-gradient(45deg, rgb(255 255 255 / .18) 0 2px, transparent 2px 6px)" }}
+                      />
+                    </span>
                   </span>
-                  <span
-                    className="absolute inset-0 rounded-md border border-white/20 bg-[#7a1020] shadow-md [backface-visibility:hidden] [transform:rotateY(180deg)]"
-                    style={{ backgroundImage: "repeating-linear-gradient(45deg, rgb(255 255 255 / .18) 0 2px, transparent 2px 6px)" }}
-                  />
-                </span>
-              </span>
-              <div className={seen ? "animate-slide-out" : ""} style={{ animationDelay: `${i * 260 + 560}ms` }}>
-                <p className="font-semibold leading-snug text-ink">{e.title}</p>
-                <p className="mt-0.5 text-sm text-muted">{e.place}</p>
-                <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-muted">{e.period}</p>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+                  <div>
+                    <p className="flex items-center gap-1.5 font-semibold leading-snug text-ink">
+                      {e.title}
+                      {live && i === 0 && (
+                        <span aria-hidden className="inline-block animate-cap-toss text-[#c8962c]" style={{ animationDelay: "300ms" }}>
+                          <LuGraduationCap size={14} />
+                        </span>
+                      )}
+                    </p>
+                    <p className="mt-0.5 text-sm text-muted">{e.place}</p>
+                    <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-muted">{e.period}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      />
     </Column>
   );
 }
@@ -284,12 +359,12 @@ const CHIP: Record<string, { color: string; label: string }> = {
   MongoDB: { color: "#047857", label: "MDB" },
 };
 
-/** A casino chip that rolls in on its edge from the right and settles; spins on hover. */
-function Chip({ issuer, rolled, delay }: { issuer: string; rolled: boolean; delay: number }) {
+/** A casino chip that hops and spins when its reel lands; spins again on hover. */
+function Chip({ issuer, live, delay }: { issuer: string; live: boolean; delay: number }) {
   const chip = CHIP[issuer] ?? { color: "#7c3aed", label: issuer.slice(0, 3).toUpperCase() };
   return (
-    // outer layer rolls in; inner layer spins on hover (the finished roll animation holds the outer transform)
-    <span aria-hidden className={`shrink-0 ${rolled ? "animate-chip-roll" : ""}`} style={{ animationDelay: `${delay}ms` }}>
+    // outer layer spins on landing; inner layer spins on hover
+    <span aria-hidden className={`shrink-0 ${live ? "animate-chip-spin" : ""}`} style={{ animationDelay: `${delay}ms` }}>
       <span
         className="relative flex h-10 w-10 items-center justify-center rounded-full shadow-[0_3px_0_rgb(0_0_0/.35)] transition-transform duration-700 group-hover:rotate-[360deg]"
         style={{ background: `repeating-conic-gradient(${chip.color} 0 22.5deg, #fff 22.5deg 30deg, ${chip.color} 30deg 45deg)` }}
@@ -302,81 +377,91 @@ function Chip({ issuer, rolled, delay }: { issuer: string; rolled: boolean; dela
   );
 }
 
-/** Certifications: each chip rolls across the table into place, one after another. */
+/** Certifications: the list rolls; when it lands every chip hops and spins, one after another. */
 function CertificationsColumn() {
-  const [ref, seen] = useSeen<HTMLUListElement>();
   return (
     <Column icon={<LuBadgeCheck size={15} />} title="Certifications" delay={80}>
-      <ul ref={ref} className="space-y-3.5">
-        {CERTIFICATIONS.map((c, i) => {
-          const body = (
-            <>
-              <Chip issuer={c.issuer} rolled={seen} delay={i * 170} />
-              <span className={`min-w-0 flex-1 ${seen ? "animate-fade-in" : ""}`} style={{ animationDelay: `${i * 170 + 550}ms` }}>
-                <span className={`block font-medium leading-snug text-ink ${c.url ? "group-hover:underline" : ""}`}>{c.name}</span>
-                <span className="text-sm text-muted">{c.issuer}</span>
-              </span>
-              {c.url && <LuArrowUpRight size={15} className="mt-1 shrink-0 text-muted transition group-hover:text-accent" />}
-            </>
-          );
-          return (
-            <li key={c.name}>
-              {c.url ? (
-                <a href={c.url} target="_blank" rel="noreferrer" className="group flex items-start gap-3">
-                  {body}
-                </a>
-              ) : (
-                <span className="group flex items-start gap-3">{body}</span>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+      <ListReel
+        index={1}
+        render={(live, shift) => (
+          <ul className="space-y-3.5">
+            {rotate(CERTIFICATIONS, shift).map((c, i) => {
+              const body = (
+                <>
+                  <Chip issuer={c.issuer} live={live} delay={i * 120} />
+                  <span className="min-w-0 flex-1">
+                    <span className={`block font-medium leading-snug text-ink ${c.url ? "group-hover:underline" : ""}`}>{c.name}</span>
+                    <span className="text-sm text-muted">{c.issuer}</span>
+                  </span>
+                  {c.url && <LuArrowUpRight size={15} className="mt-1 shrink-0 text-muted transition group-hover:text-accent" />}
+                </>
+              );
+              return (
+                <li key={c.name}>
+                  {c.url ? (
+                    <a href={c.url} target="_blank" rel="noreferrer" className="group flex items-start gap-3">
+                      {body}
+                    </a>
+                  ) : (
+                    <span className="group flex items-start gap-3">{body}</span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      />
     </Column>
   );
 }
 
-/** Wins: a gold "1st" coin flips in, then celebrates with confetti and coins. Click to celebrate again. */
+/** Wins: the list rolls; when it lands each gold "1st" coin flips and celebrates. Click a coin to celebrate again. */
 function AwardsColumn() {
-  const [ref, seen] = useSeen<HTMLUListElement>();
   const [replays, setReplays] = useState<number[]>(() => AWARDS.map(() => 0));
   return (
     <Column icon={<LuTrophy size={15} />} title="Wins" delay={160}>
-      <ul ref={ref} className="space-y-6">
-        {AWARDS.map((a, i) => {
-          const replay = replays[i];
-          const wait = replay ? 0 : i * 300; // replays start right away
-          return (
-            <li key={a.title} className="flex gap-4">
-              <button
-                type="button"
-                aria-label={`Celebrate: ${a.title}`}
-                onClick={() => setReplays((r) => r.map((v, j) => (j === i ? v + 1 : v)))}
-                className="relative mt-0.5 h-12 w-12 shrink-0 [perspective:400px]"
-              >
-                <span
-                  key={`coin-${replay}`}
-                  className={`flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#8a5a12] bg-[radial-gradient(circle_at_35%_30%,#fff3b0,#f2c94c_45%,#b07d1a)] font-display text-lg text-[#5a3a08] shadow-[0_3px_0_#7a4f10] ${seen || replay ? "animate-coin-flip" : ""}`}
-                  style={{ animationDelay: `${wait}ms` }}
-                >
-                  1<sup className="text-[9px]">st</sup>
-                </span>
-                {(seen || replay > 0) && (
-                  <span key={`party-${replay}`}>
-                    <span className="absolute inset-0 animate-sparkle rounded-full" style={{ animationDelay: `${wait + 1100}ms` }} />
-                    <Burst delay={wait + 1100} seed={i * 7 + replay * 3 + 1} />
-                  </span>
-                )}
-              </button>
-              <div>
-                <p className="font-semibold leading-snug text-ink">{a.title}</p>
-                <p className="mt-0.5 text-sm text-muted">{a.detail}</p>
-                <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-muted">{a.year}</p>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+      <ListReel
+        index={2}
+        render={(live, shift) => (
+          <ul className="space-y-6">
+            {rotate(AWARDS, shift).map((a) => {
+              const i = AWARDS.indexOf(a);
+              const replay = live ? replays[i] : 0;
+              const party = live || replay > 0;
+              const wait = replay ? 0 : i * 250; // replays start right away
+              return (
+                <li key={a.title} className="flex gap-4">
+                  <button
+                    type="button"
+                    aria-label={`Celebrate: ${a.title}`}
+                    onClick={() => setReplays((r) => r.map((v, j) => (j === i ? v + 1 : v)))}
+                    className="relative mt-0.5 h-12 w-12 shrink-0 [perspective:400px]"
+                  >
+                    <span
+                      key={`coin-${replay}`}
+                      className={`flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#8a5a12] bg-[radial-gradient(circle_at_35%_30%,#fff3b0,#f2c94c_45%,#b07d1a)] font-display text-lg text-[#5a3a08] shadow-[0_3px_0_#7a4f10] ${party ? "animate-coin-flip" : ""}`}
+                      style={{ animationDelay: `${wait}ms` }}
+                    >
+                      1<sup className="text-[9px]">st</sup>
+                    </span>
+                    {party && (
+                      <span key={`party-${replay}`}>
+                        <span className="absolute inset-0 animate-sparkle rounded-full" style={{ animationDelay: `${wait + 1100}ms` }} />
+                        <Burst delay={wait + 1100} seed={i * 7 + replay * 3 + 1} />
+                      </span>
+                    )}
+                  </button>
+                  <div>
+                    <p className="font-semibold leading-snug text-ink">{a.title}</p>
+                    <p className="mt-0.5 text-sm text-muted">{a.detail}</p>
+                    <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-muted">{a.year}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      />
     </Column>
   );
 }
