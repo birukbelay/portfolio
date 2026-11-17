@@ -1,7 +1,8 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LuArrowLeft, LuExternalLink, LuGithub, LuLinkedin, LuMail } from "react-icons/lu";
+import { LuArrowLeft, LuBadgeCheck, LuCode, LuExternalLink, LuGithub, LuGlobe, LuLinkedin, LuMail } from "react-icons/lu";
+import { AWARDS, CERTIFICATIONS, EDUCATION } from "@/data/credentials";
 import { FaMedium } from "react-icons/fa";
 import { getResumeInfo, getExperiences, getSkills } from "@/lib/db/queries";
 import ExperienceEntry from "@/components/site/ExperienceEntry";
@@ -34,6 +35,9 @@ export default async function ResumePage() {
     (resume?.linkedinUrl || LINKS.LINKEDIN_URL) && { href: resume?.linkedinUrl || LINKS.LINKEDIN_URL, icon: LuLinkedin },
     (resume?.githubUrl || LINKS.GITHUB_URL) && { href: resume?.githubUrl || LINKS.GITHUB_URL, icon: LuGithub },
     (resume?.mediumUrl || LINKS.MediumUrl) && { href: resume?.mediumUrl || LINKS.MediumUrl, icon: FaMedium },
+    LINKS.PORTFOLIO_URL && { href: LINKS.PORTFOLIO_URL, icon: LuGlobe },
+    LINKS.LEETCODE_URL && { href: LINKS.LEETCODE_URL, text: "LeetCode", icon: LuCode },
+    LINKS.CREDLY_URL && { href: LINKS.CREDLY_URL, text: "Credly", icon: LuBadgeCheck },
   ].filter(Boolean) as { href: string; text?: string; icon: React.ComponentType<{ size?: number }> }[];
   const docLink = resume?.resumeLink || LINKS.RESUME_LINK;
 
@@ -116,6 +120,46 @@ export default async function ResumePage() {
             </dl>
           </ResumeSection>
         )}
+
+        <ResumeSection title="Education">
+          <div className="space-y-4">
+            {EDUCATION.map((e) => (
+              <div key={e.title} className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+                <div>
+                  <p className="font-semibold text-ink">{e.title}</p>
+                  <p className="text-sm text-muted">{e.place} · {e.detail}</p>
+                </div>
+                <p className="shrink-0 font-mono text-xs uppercase tracking-wider text-muted">{e.period}</p>
+              </div>
+            ))}
+          </div>
+        </ResumeSection>
+
+        <ResumeSection title="Certifications">
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {CERTIFICATIONS.map((c) => (
+              <li key={c.name} className="text-ink/85">
+                {c.url ? (
+                  <a href={c.url} target="_blank" rel="noreferrer" className="hover:text-accent hover:underline">{c.name}</a>
+                ) : (
+                  c.name
+                )}
+                <span className="text-sm text-muted"> · {c.issuer}</span>
+              </li>
+            ))}
+          </ul>
+        </ResumeSection>
+
+        <ResumeSection title="Awards">
+          <ul className="space-y-2">
+            {AWARDS.map((a) => (
+              <li key={a.title} className="text-ink/85">
+                <span className="font-semibold text-ink">{a.title}</span> <span className="font-mono text-xs text-muted">({a.year})</span>
+                <span className="block text-sm text-muted">{a.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </ResumeSection>
       </article>
     </main>
   );

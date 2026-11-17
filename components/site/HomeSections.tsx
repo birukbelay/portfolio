@@ -1,10 +1,17 @@
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { LuArrowDown, LuArrowRight, LuArrowUpRight, LuDownload, LuGithub, LuLinkedin, LuMail, LuServer, LuLayoutTemplate, LuPalette } from "react-icons/lu";
+import { CREDLY_URL } from "@/data/credentials";
+import { CredentialCards, SlotMachine } from "./CasinoCredentials";
+import { LuArrowDown, LuArrowRight, LuArrowUpRight, LuDownload, LuGithub, LuLinkedin, LuMail, LuServer, LuLayoutTemplate, LuPalette, LuInfinity, LuNetwork } from "react-icons/lu";
 import { FaMedium } from "react-icons/fa";
-import ExperienceEntry, { type ExperienceData } from "./ExperienceEntry";
-import { CountUp, TimelineRail } from "./Motion";
+import { type ExperienceData } from "./ExperienceEntry";
+import ChessTimeline from "./ChessTimeline";
+import HashLink from "./HashLink";
+import StatDice from "./StatDice";
+import ProjectDeck from "./ProjectDeck";
+import SkillWheel from "./SkillWheel";
+import CardHand from "./CardHand";
+import ArcHand from "./ArcHand";
 
 // ---------------------------------------------------------------- types
 export interface Profile {
@@ -48,15 +55,14 @@ function SectionHeader({ index, label, title, children }: { index: string; label
   );
 }
 
-function Section({ id, children, className = "" }: { id: string; children: React.ReactNode; className?: string }) {
+function Section({ id, children, className = "", wide }: { id: string; children: React.ReactNode; className?: string; wide?: boolean }) {
   return (
-    <section id={id} className={`scroll-mt-24 px-6 py-24 md:py-32 ${className}`}>
-      <div className="mx-auto max-w-6xl">{children}</div>
+    <section id={id} className={`scroll-mt-24 py-24 md:py-32 ${wide ? "px-1.5 sm:px-2 lg:px-3" : "px-6"} ${className}`}>
+      <div className={`mx-auto ${wide ? "max-w-[1920px]" : "max-w-6xl"}`}>{children}</div>
     </section>
   );
 }
 
-const cleanText = (t: string) => t.replace(/\s+/g, " ").trim();
 
 // ---------------------------------------------------------------- Hero
 const HEADLINE = "I build reliable *backends and interfaces people *enjoy using."
@@ -103,14 +109,14 @@ export function Hero({ profile, stack, stats }: { profile: Profile; stack: strin
             ))}
           </h1>
           <p className="mt-6 max-w-xl animate-fade-up text-lg leading-relaxed text-muted [animation-delay:220ms]">
-            Full-stack engineer shipping production systems end to end — real-time chat, subscription engines, and the web
-            apps on top of them.
+            Full-stack developer with 6+ years building scalable backends in Node.js, Python and Go — from an
+            emergency-response platform to real-time chat and subscription engines.
           </p>
 
           <div className="mt-9 flex animate-fade-up flex-wrap items-center gap-3 [animation-delay:300ms]">
-            <Link href="/#work" className="btn-primary">
+            <HashLink href="/#work" className="btn-primary">
               See my work <LuArrowDown size={16} />
-            </Link>
+            </HashLink>
             <a href={profile.resumeLink || "/resume"} target={profile.resumeLink ? "_blank" : undefined} rel="noreferrer" className="btn-ghost">
               <LuDownload size={16} /> Résumé
             </a>
@@ -127,16 +133,10 @@ export function Hero({ profile, stack, stats }: { profile: Profile; stack: strin
         <CodeCard name={profile.fullName} role={role} stack={stack} />
       </div>
 
-      {/* Stats */}
-      <dl className="relative mx-auto mt-20 grid max-w-6xl animate-fade-up grid-cols-2 overflow-hidden rounded-2xl border border-line bg-surface/60 backdrop-blur [animation-delay:450ms] md:grid-cols-4">
-        {stats.map((s, i) => (
-          <div key={s.label} className={`p-6 ${i % 2 ? "border-l" : ""} ${i >= 2 ? "border-t md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""} border-line`}>
-            <dt className="sr-only">{s.label}</dt>
-            <dd className="font-display text-4xl tracking-tight text-ink sm:text-5xl"><CountUp value={s.value} /></dd>
-            <dd className="mt-1 text-sm text-muted">{s.label}</dd>
-          </div>
-        ))}
-      </dl>
+      {/* Stats, rolled onto the table as dice */}
+      <div className="relative mx-auto mt-20 max-w-6xl">
+        <StatDice stats={stats} />
+      </div>
     </section>
   );
 }
@@ -188,54 +188,88 @@ function CodeCard({ name, role, stack }: { name: string; role: string; stack: st
 }
 
 // ---------------------------------------------------------------- About
+// Left-to-right order of the hand; scrolling raises them in this order (System Architecture first).
 const FOCUS = [
   {
+    icon: LuNetwork,
+    rank: "A",
+    suit: "♠",
+    title: "System Architecture",
+    body: "Scalable, maintainable systems: service boundaries, API gateways, real-time messaging, caching and subscription engines.",
+  },
+  {
     icon: LuServer,
+    rank: "K",
+    suit: "♥",
     title: "Backend",
     body: "Extensible services in Node.js (NestJS), Go and Python (Flask) — clean APIs, solid data models, and integrations like Firebase.",
   },
   {
+    icon: LuInfinity,
+    rank: "Q",
+    suit: "♣",
+    title: "DevOps",
+    body: "Containerised services with Docker and Kubernetes, CI/CD pipelines, and cloud infrastructure on AWS.",
+  },
+  {
     icon: LuLayoutTemplate,
+    rank: "J",
+    suit: "♦",
     title: "Frontend",
     body: "React and Next.js apps with predictable state using Redux Toolkit, React Query and Apollo GraphQL.",
   },
   {
     icon: LuPalette,
+    rank: "10",
+    suit: "♥",
     title: "UI / UX",
     body: "Responsive, accessible interfaces with Tailwind CSS, MUI, Ant Design and styled-components.",
   },
 ];
 
 export function About() {
+  const hand = FOCUS.map(({ icon: Icon, title, body, rank, suit }) => ({
+    rank,
+    suit,
+    content: (
+      <>
+        <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent">
+          <Icon size={20} />
+        </span>
+        <h3 className="mt-3 text-center font-display text-[1.35rem] leading-tight tracking-tight text-ink">{title}</h3>
+        <p className="mt-2 text-center text-[12px] leading-relaxed text-muted">{body}</p>
+      </>
+    ),
+  }));
   return (
     <Section id="about">
-      <SectionHeader index="01" label="About" title={<>An engineer who cares about the <em>whole</em> product.</>} />
-      <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr]">
-        <div data-reveal className="space-y-5 text-lg leading-relaxed text-muted">
-          <p>
-            I&apos;m a full-stack engineer for web and mobile. I&apos;ve built and improved apps for clients in{" "}
-            <span className="text-ink">e-commerce, entertainment, ERP and tourism</span>, and worked with distributed teams on
-            large products used by real people every day.
-          </p>
-          <p>
-            I like owning a feature from the database schema to the last pixel, and I care about the details that make
-            software feel fast and dependable.
-          </p>
-          <Link href="/#work" className="group inline-flex items-center gap-2 text-base font-medium text-ink">
-            Check out my latest projects
-            <LuArrowRight size={16} className="transition group-hover:translate-x-1" />
-          </Link>
+      {/* Desktop: title + text on the left, the cards curving down the right side like a
+          reversed C (Ↄ) the full height of the section. Smaller screens: a compact hand below. */}
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,470px)] lg:gap-6">
+        <div>
+          <SectionHeader index="01" label="About" title={<>An engineer who cares about the <em>whole</em> product.</>} />
+          <div className="space-y-5 text-lg leading-relaxed text-muted">
+            <p>
+              I&apos;m a full-stack developer with <span className="text-ink">6+ years of experience</span>, specializing in
+              backends with <span className="text-ink">Node.js, Python and Go</span>. I build scalable, high-performance APIs
+              — from an emergency-response platform with 99.9% uptime to real-time chat and subscription engines.
+            </p>
+            <p>
+              I bring a strong ownership mindset, clear communication and a keen eye for detail, and I keep learning as the
+              technology moves.
+            </p>
+            <HashLink href="/#work" className="group inline-flex items-center gap-2 text-base font-medium text-ink">
+              Check out my latest projects
+              <LuArrowRight size={16} className="transition group-hover:translate-x-1" />
+            </HashLink>
+          </div>
         </div>
-        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-          {FOCUS.map(({ icon: Icon, title, body }, i) => (
-            <div key={title} data-reveal data-spotlight style={{ transitionDelay: `${i * 80}ms` }} className="card p-6 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-ink/5">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                <Icon size={20} />
-              </span>
-              <h3 className="mt-5 font-semibold text-ink">{title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">{body}</p>
-            </div>
-          ))}
+        {/* starts up beside the section label so the arc has room without running far below the text */}
+        <div className="hidden lg:-mt-36 lg:block">
+          <ArcHand cards={hand} />
+        </div>
+        <div className="lg:hidden">
+          <CardHand cards={hand} />
         </div>
       </div>
     </Section>
@@ -252,14 +286,7 @@ export function Experience({ items }: { items: (ExperienceData & { id: string })
           Full résumé <LuArrowUpRight size={15} />
         </Link>
       </SectionHeader>
-      <div className="relative mx-auto max-w-4xl space-y-12">
-        {items.map((exp) => (
-          <div key={exp.id} data-reveal className="relative z-10">
-            <ExperienceEntry data={exp} maxTasks={3} />
-          </div>
-        ))}
-        <TimelineRail className="bottom-2 left-[5px] top-2" />
-      </div>
+      <ChessTimeline items={items} />
     </Section>
   );
 }
@@ -267,111 +294,14 @@ export function Experience({ items }: { items: (ExperienceData & { id: string })
 // ---------------------------------------------------------------- Work
 export function Work({ projects }: { projects: ProjectCard[] }) {
   if (!projects.length) return null;
-  const [featured, ...rest] = projects;
   return (
-    <Section id="work">
-      <SectionHeader index="03" label="Selected work" title="Things I've designed, built and shipped." />
-      <FeaturedProject project={featured} />
-      <div className="mt-6 grid gap-6 md:grid-cols-2">
-        {rest.map((p, i) => (
-          <ProjectTile key={p.id} project={p} delay={(i % 2) * 80} />
-        ))}
+    <Section id="work" wide>
+      {/* heading stays aligned with the other sections; the table uses the extra width */}
+      <div className="mx-auto max-w-6xl px-[18px] sm:px-4 lg:px-3 xl:px-0">
+        <SectionHeader index="03" label="Selected work" title="Things I've designed, built and shipped." />
       </div>
+      <ProjectDeck projects={projects} />
     </Section>
-  );
-}
-
-function ProjectLinks({ project }: { project: ProjectCard }) {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Link href={`/${project.id}`} className="btn-primary px-4 py-2 text-xs">
-        Case study <LuArrowRight size={14} />
-      </Link>
-      {project.demo && (
-        <a href={project.demo} target="_blank" rel="noreferrer" className="btn-ghost px-4 py-2 text-xs">
-          Live <LuArrowUpRight size={14} />
-        </a>
-      )}
-      {project.code && (
-        <a href={project.code} target="_blank" rel="noreferrer" className="btn-ghost px-4 py-2 text-xs">
-          <LuGithub size={14} /> Code
-        </a>
-      )}
-    </div>
-  );
-}
-
-function Chips({ items, max = 4 }: { items: string[]; max?: number }) {
-  return (
-    <div className="flex flex-wrap gap-1.5">
-      {items.slice(0, max).map((t) => (
-        <span key={t} className="rounded-full border border-line px-2.5 py-0.5 font-mono text-[11px] text-muted">
-          {t}
-        </span>
-      ))}
-      {items.length > max && <span className="px-1 font-mono text-[11px] text-muted">+{items.length - max}</span>}
-    </div>
-  );
-}
-
-function FeaturedProject({ project }: { project: ProjectCard }) {
-  return (
-    <article data-reveal data-spotlight className="card group grid overflow-hidden lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
-      <Link href={`/${project.id}`} className="relative block aspect-[16/10] overflow-hidden bg-line/40 lg:aspect-auto lg:min-h-[420px]">
-        <Image src={project.image} alt={project.name} fill priority sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover transition duration-700 group-hover:scale-[1.03]" />
-        <span className="absolute left-4 top-4 rounded-full bg-accent px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-accent-ink">Featured</span>
-      </Link>
-      <div className="flex flex-col justify-between gap-8 p-8 lg:p-10">
-        <div>
-          <p className="font-mono text-xs uppercase tracking-wider text-muted">{project.tech}</p>
-          <h3 className="mt-3 font-display text-4xl tracking-tight text-ink">{project.name}</h3>
-          <p className="mt-4 line-clamp-5 leading-relaxed text-muted">{cleanText(project.desc)}</p>
-        </div>
-        <div className="space-y-5">
-          <Chips items={project.technologies} max={6} />
-          <ProjectLinks project={project} />
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function ProjectTile({ project, delay }: { project: ProjectCard; delay: number }) {
-  return (
-    <article data-reveal data-spotlight style={{ transitionDelay: `${delay}ms` }} className="card group flex flex-col overflow-hidden transition hover:shadow-2xl hover:shadow-ink/5">
-      <Link href={`/${project.id}`} className="relative block aspect-[16/10] overflow-hidden bg-line/40">
-        <Image src={project.image} alt={project.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
-      </Link>
-      <div className="flex flex-1 flex-col gap-4 p-6">
-        <div>
-          <div className="flex items-start justify-between gap-3">
-            <h3 className="text-xl font-semibold tracking-tight text-ink">
-              <Link href={`/${project.id}`} className="hover:underline">{project.name}</Link>
-            </h3>
-            <Link href={`/${project.id}`} aria-label={`${project.name} case study`} className="rounded-full border border-line p-2 text-muted transition group-hover:border-ink group-hover:bg-ink group-hover:text-paper">
-              <LuArrowUpRight size={16} />
-            </Link>
-          </div>
-          <p className="mt-1 font-mono text-xs text-muted">{project.tech}</p>
-          <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">{cleanText(project.desc)}</p>
-        </div>
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-3">
-          <Chips items={project.technologies} />
-          <div className="flex gap-1">
-            {project.demo && (
-              <a href={project.demo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-ink hover:bg-ink/5">
-                Live <LuArrowUpRight size={13} />
-              </a>
-            )}
-            {project.code && (
-              <a href={project.code} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-ink hover:bg-ink/5">
-                Code <LuArrowUpRight size={13} />
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
-    </article>
   );
 }
 
@@ -392,55 +322,28 @@ export function groupSkills<T extends { category: string }>(skills: T[]) {
 
 export function Skills({ skills }: { skills: SkillItem[] }) {
   if (!skills.length) return null;
-  const groups = groupSkills(skills);
   return (
     <Section id="skills" className="bg-surface/50">
       <SectionHeader index="04" label="Toolkit" title="The tools I reach for to ship." />
-      <SkillMarquee skills={skills} />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {groups.map(([cat, items], i) => (
-          <div key={cat} data-reveal data-spotlight style={{ transitionDelay: `${i * 70}ms` }} className="card p-6">
-            <h3 className="font-mono text-xs uppercase tracking-wider text-muted">{cat}</h3>
-            <ul className="mt-5 space-y-3">
-              {items.map((s) => (
-                <li key={s.id} className="flex items-center gap-3 text-sm font-medium text-ink">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white ring-1 ring-line">
-                    {s.image ? (
-                      <Image src={s.image} alt="" width={20} height={20} className="h-5 w-5 object-contain" />
-                    ) : (
-                      <span className="text-[10px] font-bold text-muted">{s.name.slice(0, 2).toUpperCase()}</span>
-                    )}
-                  </span>
-                  <span className="capitalize">{s.name}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+      <SkillWheel groups={groupSkills(skills)} />
     </Section>
   );
 }
 
-/** An endless, slowly scrolling strip of skill logos (pauses on hover). */
-function SkillMarquee({ skills }: { skills: SkillItem[] }) {
-  const items = skills.filter((s) => s.image);
-  if (items.length < 4) return null;
+// ---------------------------------------------------------------- Credentials
+export function Credentials() {
   return (
-    <div
-      data-reveal
-      className="group relative -mx-6 mb-10 overflow-hidden py-2 [mask-image:linear-gradient(90deg,transparent,black_12%,black_88%,transparent)]"
-      aria-hidden
-    >
-      <div className="flex w-max animate-marquee gap-3 group-hover:[animation-play-state:paused]">
-        {[...items, ...items].map((s, i) => (
-          <span key={i} className="chip shrink-0 gap-2 px-4 py-2 text-sm">
-            <Image src={s.image} alt="" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
-            <span className="capitalize">{s.name}</span>
-          </span>
-        ))}
-      </div>
-    </div>
+    <Section id="credentials">
+      <SectionHeader index="05" label="Credentials" title="Education, certifications and wins.">
+        <div className="flex flex-col items-start gap-3 md:items-end">
+          <SlotMachine />
+          <a href={CREDLY_URL} target="_blank" rel="noreferrer" className="btn-ghost px-4 py-2 text-xs">
+            Verify on Credly <LuArrowUpRight size={14} />
+          </a>
+        </div>
+      </SectionHeader>
+      <CredentialCards />
+    </Section>
   );
 }
 
@@ -459,7 +362,7 @@ export function Contact({ profile }: { profile: Profile }) {
         <div aria-hidden className="absolute inset-0 opacity-[.07]" style={{ backgroundImage: "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)", backgroundSize: "56px 56px" }} />
         <div className="relative max-w-3xl">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-white/50">
-            <span className="text-accent">05</span> — Contact
+            <span className="text-accent">06</span> — Contact
           </p>
           <h2 className="mt-4 font-display text-5xl leading-[1.02] tracking-tight sm:text-6xl">
             Have a role or project in mind? <em className="text-accent">Let&apos;s talk.</em>

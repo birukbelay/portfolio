@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b3b3a"/>
+      <stop offset="1" stop-color="#06201f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <g fill="none" stroke="#48cae4" stroke-width="6" opacity=".85">
+    <rect x="1000" y="250" width="150" height="150" rx="18"/>
+    <rect x="1250" y="400" width="150" height="150" rx="18"/>
+    <rect x="1000" y="560" width="150" height="150" rx="18"/>
+    <rect x="1250" y="710" width="150" height="150" rx="18" opacity=".6"/>
+    <path d="M1150 325 L1250 475 M1150 635 L1250 475 M1325 550 L1325 710"/>
+  </g>
+  <g fill="#f2b84b"><circle cx="1075" cy="325" r="16"/><circle cx="1325" cy="475" r="16"/><circle cx="1075" cy="635" r="16"/><circle cx="1325" cy="785" r="16"/></g>
+  <text x="120" y="400" fill="#9bd1c9" font-family="Georgia, serif" font-size="64" opacity=".85">Blockchain-verified</text>
+  <text x="120" y="510" fill="#ffffff" font-family="Georgia, serif" font-size="112">Supply Chain</text>
+  <text x="120" y="600" fill="#9bd1c9" font-family="monospace" font-size="34">Node.js · Solidity · GraphQL · Flutter · Next.js</text>
+</svg>
