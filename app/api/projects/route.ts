@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
-import { projectsData } from "@/data/projectsData";
+import { getProjects } from "@/lib/db/queries";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const projects = Object.values(projectsData);
+  const projects = await getProjects();
   return NextResponse.json({ projects });
 }
