@@ -1,6 +1,6 @@
 import React from "react";
 import { getExperiences, getProjects, getResumeInfo, getSkills } from "@/lib/db/queries";
-import { About, Contact, Experience, Hero, Skills, Work } from "@/components/site/HomeSections";
+import { About, Contact, Credentials, Experience, Hero, Skills, Work } from "@/components/site/HomeSections";
 import { HERO_STACK } from "@/data/profile";
 import { parseTimeFrame, splitTitle } from "@/lib/experience";
 import { LINKS } from "@/data/myLinks";
@@ -47,6 +47,7 @@ export default async function Home() {
       <Experience items={experiences} />
       <Work projects={projects} />
       <Skills skills={skills} />
+      <Credentials />
       <Contact profile={profile} />
     </main>
   );

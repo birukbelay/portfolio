@@ -34,12 +34,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning className={`scroll-smooth ${sans.variable} ${display.variable} ${mono.variable}`}>
       <body>
-        {/* Runs before paint: applies the saved theme (no flash) and enables scroll-reveal styles
-            only when JS runs, so content never stays hidden without it. */}
+        {/* Runs before paint: applies the saved theme (no flash). Entrance animations and scroll
+            reveals only switch on once the browser actually draws a frame ("motion-ready"), so
+            content never gets stuck invisible where animations can't run. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){var d=document.documentElement;d.classList.add('js-reveal');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'||t==='ocean')d.dataset.theme=t}catch(e){}})()",
+              "(function(){var d=document.documentElement;d.classList.add('js-reveal');requestAnimationFrame(function(){d.classList.add('motion-ready')});try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'||t==='ocean')d.dataset.theme=t}catch(e){}})()",
           }}
         />
         <RevealObserver />

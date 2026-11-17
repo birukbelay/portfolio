@@ -13,10 +13,13 @@ export default function ExperienceEntry({
   data,
   maxTasks,
   compact,
+  marker,
 }: {
   data: ExperienceData;
   maxTasks?: number;
   compact?: boolean;
+  /** Replaces the default timeline dot (e.g. a chess piece on the home page). */
+  marker?: React.ReactNode;
 }) {
   const { role, company } = splitTitle(data.title);
   const current = isCurrent(data.timeFrame);
@@ -28,12 +31,14 @@ export default function ExperienceEntry({
   return (
     <article className="relative pl-8">
       {/* Timeline marker */}
-      <span
-        aria-hidden
-        className={`absolute left-0 top-1.5 h-3 w-3 rounded-full border-2 ${
-          current ? "border-accent bg-accent" : "border-ink/30 bg-paper"
-        }`}
-      />
+      {marker ?? (
+        <span
+          aria-hidden
+          className={`absolute left-0 top-1.5 h-3 w-3 rounded-full border-2 ${
+            current ? "border-accent bg-accent" : "border-ink/30 bg-paper"
+          }`}
+        />
+      )}
       <div className={`flex flex-col gap-1 ${compact ? "" : "sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"}`}>
         <h3 className="text-lg font-semibold leading-snug tracking-tight text-ink">
           {role}
