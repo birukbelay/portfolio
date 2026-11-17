@@ -1,2 +1,6 @@
+# Single-package repo. pnpm 9 (used by Vercel for lockfile v9) requires a packages list.
+packages:
+  - "."
+
 allowBuilds:
   unrs-resolver: true
