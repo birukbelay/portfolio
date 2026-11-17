@@ -28,5 +28,17 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# sqlite & uploads
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+# committed fallback copy of the Cloudflare D1 database (kept in sync by scripts/sync-db.mjs)
+!/portfolio.db
+/public/uploads
+
 # vercel
 .vercel
+
+# TypeScript incremental build cache
+tsconfig.tsbuildinfo

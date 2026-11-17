@@ -1,24 +1,47 @@
-import type { Metadata } from "next";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import type { Metadata, Viewport } from "next";
+import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import Navbar from "@/components/site/Navbar";
+import Footer from "@/components/site/Footer";
+import RevealObserver from "@/components/site/RevealObserver";
 import "@/styles/globals.css";
 
+const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
+const display = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-display",
+  display: "swap",
+});
+const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
+
 export const metadata: Metadata = {
-  title: "Biruk | Software Engineer",
-  description: "Full-Stack Developer, Web and Mobile",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  title: "Biruk Kassa — Software Engineer",
+  description:
+    "Full-stack software engineer building scalable backends (Node.js, NestJS, Go) and polished web apps (React, Next.js).",
+  icons: { icon: "/favicon.ico" },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f6f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e0e0c" },
+  ],
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className="bg-[#ecf0f3] text-[#1f2937] tracking-wide antialiased">
+    <html lang="en" suppressHydrationWarning className={`scroll-smooth ${sans.variable} ${display.variable} ${mono.variable}`}>
+      <body>
+        {/* Runs before paint: applies the saved theme (no flash) and enables scroll-reveal styles
+            only when JS runs, so content never stays hidden without it. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){var d=document.documentElement;d.classList.add('js-reveal');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'||t==='ocean')d.dataset.theme=t}catch(e){}})()",
+          }}
+        />
+        <RevealObserver />
         <Navbar />
         {children}
         <Footer />

@@ -2,119 +2,124 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { RiRadioButtonFill } from "react-icons/ri";
-import { projectsData } from "@/data/projectsData";
 import type { Metadata } from "next";
+import { LuArrowLeft, LuArrowRight, LuArrowUpRight, LuGithub } from "react-icons/lu";
+import { getProjectById, getProjects } from "@/lib/db/queries";
 
-type Props = {
-  params: Promise<{ projectId: string }>;
-};
+export const dynamic = "force-dynamic";
 
-export async function generateStaticParams() {
-  return Object.keys(projectsData).map((projectId) => ({
-    projectId,
-  }));
-}
+type Props = { params: Promise<{ projectId: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { projectId } = await params;
-  const project = (projectsData as Record<string, any>)[projectId];
-
-  if (!project) {
-    return {
-      title: "Project Not Found",
-    };
-  }
-
+  const project = await getProjectById(projectId);
+  if (!project) return { title: "Project not found" };
   return {
-    title: `${project.name} | Biruk Kassa`,
-    description: project.desc,
+    title: `${project.name} — Biruk Kassa`,
+    description: project.desc.replace(/\s+/g, " ").slice(0, 160),
+    openGraph: { images: project.image ? [project.image] : undefined },
   };
 }
 
 export default async function ProjectPage({ params }: Props) {
   const { projectId } = await params;
-  const project = (projectsData as Record<string, any>)[projectId];
+  const [project, all] = await Promise.all([getProjectById(projectId), getProjects()]);
+  if (!project) notFound();
 
-  if (!project) {
-    notFound();
-  }
+  const index = all.findIndex((p) => p.id === project.id);
+  const next = all.length > 1 ? all[(index + 1) % all.length] : null;
+  const paragraphs = project.desc.split(/\n\s*\n/).map((p) => p.replace(/\s+/g, " ").trim()).filter(Boolean);
 
   return (
-    <div className="pt-20 w-full">
-      <div className="w-screen h-[50vh] relative">
-        <div className="absolute top-0 left-0 w-full h-[50vh] bg-black/40 z-10" />
-        <Image
-          className="object-cover"
-          fill
-          priority
-          sizes="100vw"
-          src={project.image}
-          alt={project.name}
-        />
-        <div className="absolute top-[70%] max-w-[1240px] w-full left-[50%] translate-x-[-50%] text-white py-4 z-10 px-4">
-          <h2 className="py-2">{project.name}</h2>
-          <h3 className="text-xl font-normal">{project.tech}</h3>
-        </div>
-      </div>
+    <main className="px-6 pb-24 pt-32 md:pt-40">
+      <div className="mx-auto max-w-6xl">
+        <Link href="/#work" className="inline-flex animate-fade-up items-center gap-1.5 text-sm text-muted hover:text-ink">
+          <LuArrowLeft size={15} /> All projects
+        </Link>
 
-      <div className="max-w-[1240px] mx-auto p-4 grid md:grid-cols-5 gap-8 py-8">
-        <div className="col-span-4">
-          <p className="uppercase text-sm tracking-widest text-[#5651e5] font-semibold">
-            Project
-          </p>
-          <h2 className="py-2">Overview</h2>
-          <p className="py-2 text-gray-700 leading-relaxed">{project.desc}</p>
-          <div className="flex gap-4 mt-4">
-            {project.code ? (
-              <a href={project.code} target="_blank" rel="noreferrer">
-                <button className="px-8 py-2">Code</button>
+        <header className="mt-8 grid animate-fade-up gap-8 [animation-delay:80ms] lg:grid-cols-[1.4fr_1fr] lg:items-end">
+          <div>
+            <p className="section-label">Case study</p>
+            <h1 className="mt-3 font-display text-5xl leading-[1.02] tracking-tight text-ink sm:text-7xl">{project.name}</h1>
+            <p className="mt-4 font-mono text-sm text-muted">{project.tech}</p>
+          </div>
+          <div className="flex flex-wrap gap-3 lg:justify-end">
+            {project.demo && (
+              <a href={project.demo} target="_blank" rel="noreferrer" className="btn-accent">
+                Visit live site <LuArrowUpRight size={16} />
               </a>
-            ) : null}
-            {project.demo ? (
-              <a href={project.demo} target="_blank" rel="noreferrer">
-                <button className="px-8 py-2">Demo</button>
+            )}
+            {project.code && (
+              <a href={project.code} target="_blank" rel="noreferrer" className="btn-ghost">
+                <LuGithub size={16} /> Source code
               </a>
-            ) : null}
+            )}
+          </div>
+        </header>
+
+        <div className="card relative mt-12 aspect-[16/9] animate-fade-up overflow-hidden shadow-2xl shadow-ink/10 [animation-delay:160ms]">
+          <Image src={project.image} alt={project.name} fill priority sizes="(max-width: 1200px) 100vw, 1150px" className="object-cover" />
+        </div>
+
+        <div className="mt-16 grid gap-12 lg:grid-cols-[1fr_300px]">
+          <div data-reveal>
+            <h2 className="section-label">Overview</h2>
+            <div className="mt-5 space-y-5 text-lg leading-relaxed text-ink/80">
+              {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
+            </div>
+
+            {project.video && (
+              <div className="mt-12">
+                <h2 className="section-label">Walkthrough</h2>
+                <video className="card mt-5 w-full shadow-xl" autoPlay loop muted playsInline controls>
+                  <source src={project.video} type="video/mp4" />
+                </video>
+              </div>
+            )}
           </div>
 
-          {project.video ? (
-            <div className="mt-8">
-              <video
-                className="w-full shadow-xl shadow-gray-400 rounded-xl"
-                autoPlay
-                loop
-                muted
-                playsInline
-                id="video"
-              >
-                <source src={project.video} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+          <aside data-reveal className="h-fit lg:sticky lg:top-28">
+            <div className="card p-6">
+              <h2 className="section-label">Built with</h2>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {project.technologies.map((t) => (
+                  <li key={t} className="chip">{t}</li>
+                ))}
+              </ul>
+              {(project.demo || project.code) && (
+                <>
+                  <h2 className="section-label mt-8">Links</h2>
+                  <ul className="mt-3 space-y-2 text-sm">
+                    {project.demo && (
+                      <li><a href={project.demo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-ink hover:text-accent">Live site <LuArrowUpRight size={14} /></a></li>
+                    )}
+                    {project.code && (
+                      <li><a href={project.code} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-ink hover:text-accent">Repository <LuArrowUpRight size={14} /></a></li>
+                    )}
+                  </ul>
+                </>
+              )}
             </div>
-          ) : null}
+          </aside>
         </div>
 
-        <div className="col-span-4 md:col-span-1 shadow-xl shadow-gray-400 rounded-xl py-4 h-fit">
-          <div className="p-4">
-            <p className="text-center font-bold pb-2">Technologies</p>
-            <div className="grid grid-cols-2 md:grid-cols-1 gap-1">
-              {project.technologies.map((item: string, key: number) => (
-                <p key={key} className="text-gray-600 py-2 flex items-center text-sm">
-                  <RiRadioButtonFill className="pr-1 text-[#5651e5] shrink-0" size={18} />
-                  <span>{item}</span>
-                </p>
-              ))}
+        {next && (
+          <Link href={`/${next.id}`} data-reveal className="card group mt-24 flex items-center justify-between gap-6 p-6 transition hover:border-ink/30 sm:p-8">
+            <div className="flex items-center gap-5">
+              <div className="relative hidden h-16 w-24 shrink-0 overflow-hidden rounded-lg sm:block">
+                <Image src={next.image} alt="" fill sizes="96px" className="object-cover" />
+              </div>
+              <div>
+                <p className="section-label">Next project</p>
+                <p className="mt-1 font-display text-3xl tracking-tight text-ink">{next.name}</p>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div className="col-span-4">
-          <Link href="/#projects" className="underline cursor-pointer text-gray-700 hover:text-black">
-            Back to Projects
+            <span className="rounded-full border border-line p-3 text-ink transition group-hover:bg-ink group-hover:text-paper">
+              <LuArrowRight size={20} />
+            </span>
           </Link>
-        </div>
+        )}
       </div>
-    </div>
+    </main>
   );
 }

@@ -3,6 +3,8 @@ export const LINKS ={
     GITHUB_URL : 'https://www.github.com/birukbelay/',
     PORTFOLIO_URL:"https://www.bruk.vercel.app",
     MediumUrl:"https://medium.com/@birukkassa",
+    // Public contact email shown on the site (leave empty to hide the email button)
+    EMAIL: "",
     RESUME_LINK:'https://docs.google.com/document/d/1ZouPuatNi0ODXwzVcWzgr95gw5ZaeI14cH4V8AUaelA/edit?usp=sharing',
 
 // PROJECTS
